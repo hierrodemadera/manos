@@ -191,6 +191,54 @@ svg{display:block;}
 .empty{opacity:.55;padding:40px 10px;text-align:center;}
 @media (max-width:560px){.grid{grid-template-columns:1fr;}.fh{font-size:22px;}.row .rs{max-width:38vw;overflow:hidden;text-overflow:ellipsis;}}
 
+/* metrónomo: ventana y barra de abajo */
+#met{position:fixed;inset:0;z-index:920;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.35);}
+#met.open{display:flex;}
+#met .pk{background:var(--solid);width:100%;max-width:560px;max-height:96vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:auto;box-shadow:0 8px 30px rgba(0,0,0,.3);}
+@media (min-width:600px){#met{align-items:center;}#met .pk{border-radius:18px;}}
+#met .pkh{position:sticky;top:0;background:var(--solid);z-index:1;}
+.mb{padding:0 14px calc(18px + env(safe-area-inset-bottom,0px));}
+.mbig{display:flex;align-items:center;justify-content:center;gap:6px;padding:6px 0 2px;}
+.mbig button{width:46px;height:44px;border-radius:12px;background:var(--h);font-weight:700;font-size:14px;}
+.mbpm{min-width:118px;text-align:center;display:flex;flex-direction:column;align-items:center;}
+.mbpm b{font-size:58px;font-weight:300;line-height:1;font-variant-numeric:tabular-nums;}
+.mbpm small{font-size:13px;opacity:.55;}
+#m-sl{width:100%;margin:10px 0 4px;accent-color:#2f8cf5;height:28px;}
+.mdots{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:10px 0 2px;}
+.mdot{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;background:var(--h);box-shadow:inset 0 0 0 2px var(--b);}
+.mdot[data-a="3"]{box-shadow:inset 0 0 0 3px #e5383b;}
+.mdot[data-a="2"]{box-shadow:inset 0 0 0 2px #2f8cf5;}
+.mdot[data-a="1"]{box-shadow:inset 0 0 0 2px rgba(47,140,245,.4);opacity:.75;}
+.mdot[data-a="0"]{opacity:.3;}
+.mdot.on{background:#2f8cf5;color:#fff;}
+.mdot.on[data-a="3"]{background:#e5383b;}
+.mdot.mu{background:var(--h) !important;color:inherit !important;}
+.mrow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;font-size:14px;padding-top:4px;}
+.mrow input[type=number]{width:62px;height:36px;border-radius:10px;border:1px solid var(--b) !important;padding:0 8px !important;font-size:16px;outline:none;background:transparent;cursor:text;-webkit-user-select:text;user-select:text;}
+.mrow input[type=range]{flex:1;min-width:120px;accent-color:#2f8cf5;}
+.mrow input[type=text]{flex:1;min-width:120px;height:36px;border-radius:10px;border:1px solid var(--b) !important;padding:0 10px !important;font-size:16px;outline:none;cursor:text;-webkit-user-select:text;user-select:text;}
+.mpre{display:inline-flex;align-items:center;border-radius:14px;background:var(--h);}
+.mpre .chip{background:transparent !important;}
+.mpre .mpx{padding:6px 10px 6px 2px !important;opacity:.45;}
+#mbar{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:5;display:none;align-items:center;gap:2px;background:var(--panel);border-radius:22px;padding:4px;box-shadow:0 2px 14px rgba(0,0,0,.18),0 0 0 .5px var(--b);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);max-width:calc(100vw - 92px);}
+#mbar.open{display:flex;}
+#mbar button{height:36px;min-width:34px;padding:0 8px !important;border-radius:18px;font-weight:700;}
+#mbar button:hover{background:var(--h);}
+#mbar .mplay{background:#2f8cf5 !important;color:#fff;}
+#mbar .mbv{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;padding:0 2px;}
+#mbar .mbv small{font-weight:500;opacity:.55;font-size:11px;}
+#mbar .mds{display:flex;gap:3px;padding:0 6px;}
+#mbar .mds i{width:8px;height:8px;border-radius:50%;background:var(--b);}
+#mbar .mds i.a3{box-shadow:0 0 0 1.5px #e5383b;}
+#mbar .mds i.on{background:#2f8cf5;}
+#mbar .mds i.on.a3{background:#e5383b;}
+#mbar .mi{font-size:12px;opacity:.55;white-space:nowrap;padding:0 4px;}
+@media (max-width:420px){#mbar .mi{display:none;}#mbar .mds i{width:7px;height:7px;}}
+body.hasbar .notebtn{bottom:calc(72px + env(safe-area-inset-bottom,0px));}
+body.hasbar .lad{bottom:calc(138px + env(safe-area-inset-bottom,0px));}
+body.hasbar .toast{bottom:calc(70px + env(safe-area-inset-bottom,0px));}
+.plink.on{background:#2f8cf5 !important;color:#fff !important;}
+
 /* editor de ejercicios: la tabla */
 #edit{position:fixed;inset:0;z-index:905;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.35);}
 #edit.open{display:flex;}
@@ -287,7 +335,7 @@ svg{display:block;}
   <div class="top">
     <div class="bar"><button class="bt" data-v="back" aria-label="Atrás"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><button class="bt" data-v="fwd" aria-label="Adelante"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button><button class="bt" data-v="home" aria-label="Inicio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-7 8 7v9H4z"/></svg></button><div class="crumb"></div></div>
     <div class="bar search"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:8px;opacity:.6;flex-shrink:0"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/></svg><input type="search" id="q" placeholder="buscar…" autocomplete="off" spellcheck="false"></div>
-    <div class="bar"><button class="bt" data-v="menu" title="Más" aria-label="Más opciones"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg></button></div>
+    <div class="bar"><button class="bt" data-v="met" title="Metrónomo" aria-label="Metrónomo"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l4 18H5z"/><path d="M12 15l5-9"/><path d="M7.5 15h9"/></svg></button><button class="bt" data-v="menu" title="Más" aria-label="Más opciones"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg></button></div>
   </div>
   <div class="tabs"><button class="tab" data-tab="m">Manos</button><button class="tab" data-tab="e">Ejercicios</button><button class="tab" data-tab="r">Rutinas</button></div>
   <div class="body" id="body"></div>
@@ -299,6 +347,8 @@ svg{display:block;}
 <div id="edit"></div>
 <div id="play"></div>
 <div id="ses"></div>
+<div id="met"></div>
+<div id="mbar"></div>
 <div class="toast" id="toast"></div>
 <input type="file" id="imp" accept=".json,application/json" style="display:none">
 <script>
@@ -615,9 +665,10 @@ function openPlay(a){
   play.innerHTML = `<div class="pk" role="dialog"><div class="pkh"><span>${esc(name)}</span><button data-plx="1">Cerrar</button></div><div class="padwrap">${HANDS}</div>
     <div class="plcap"></div><div class="plkeys"></div><div class="pldots">${st.map((_, i)=> `<i data-i="${i}"${i && i % (x.sub || 1) === 0 && (x.sub || 1) > 1 ? ' style="margin-left:8px"' : ''}></i>`).join('')}</div>
     <div class="plctl"><button data-pl="prev" aria-label="Paso anterior">‹</button><button data-pl="toggle" class="pltog" aria-label="Pausa">❚❚</button><button data-pl="next" aria-label="Paso siguiente">›</button><span class="sep"></span>${[1, .5, .25].map(s=> `<button class="chip${s === 1 ? ' on' : ''}" data-spd="${s}">${s === 1 ? '1×' : s === .5 ? '½×' : '¼×'}</button>`).join('')}</div>
+    <div class="chips" style="justify-content:center;padding:6px 12px 0"><button class="chip plink" data-plink="1">♩ Con el metrónomo</button></div>
     <div class="plhint">1× = ${bpm} bpm${(x.sub || 1) > 1 ? ' en ' + SUBS[x.sub] : ''}, tu tempo · manos sobre la mesa, vistas desde arriba</div></div>`;
   play.classList.add('open');
-  pl = { steps: st, i: -1, spd: 1, run: true, t: 0, ms: 60000 / bpm / (x.sub || 1), svg: $('svg', play) };
+  pl = { steps: st, i: -1, spd: 1, run: true, t: 0, ms: 60000 / bpm / (x.sub || 1), svg: $('svg', play), x };
   plNext();
 }
 function plShow(i){
@@ -628,11 +679,13 @@ function plShow(i){
 }
 function plNext(){ if(!pl) return; clearTimeout(pl.t); plShow((pl.i + 1) % pl.steps.length); if(pl.run) pl.t = setTimeout(plNext, pl.ms / pl.spd); }
 function plSetRun(r){ pl.run = r; $('.pltog', play).textContent = r ? '❚❚' : '▶'; clearTimeout(pl.t); if(r) pl.t = setTimeout(plNext, pl.ms / pl.spd); else plShow(pl.i); }
-function closePlay(){ if(!play.classList.contains('open')) return; if(pl) clearTimeout(pl.t); pl = null; play.classList.remove('open'); play.innerHTML = ''; }
+function closePlay(){ if(!play.classList.contains('open')) return; MT.linked = false; if(pl) clearTimeout(pl.t); pl = null; play.classList.remove('open'); play.innerHTML = ''; }
 play.addEventListener('click', e=>{
   if(e.target === play || e.target.closest('[data-plx]')){ closePlay(); return; }
   if(!pl) return;
+  if(e.target.closest('[data-plink]')){ if(MT.linked){ MT.linked = false; mStop(); plSetRun(false); } else linkPlayer(); return; }
   const b = e.target.closest('[data-pl]'), s = e.target.closest('[data-spd]'), dot = e.target.closest('.pldots i');
+  if(MT.linked && (b || s || dot)){ MT.linked = false; $('.plink', play).classList.remove('on'); if(b && b.dataset.pl === 'toggle'){ mStop(); plSetRun(false); return; } }
   if(s){ pl.spd = +s.dataset.spd; play.querySelectorAll('[data-spd]').forEach(c=> c.classList.toggle('on', c === s)); if(pl.run){ clearTimeout(pl.t); pl.t = setTimeout(plNext, pl.ms / pl.spd); } return; }
   if(dot){ plSetRun(false); plShow(+dot.dataset.i); return; }
   if(!b) return;
@@ -665,7 +718,7 @@ function startSes(rid){
   const r = routines[rid]; if(!r) return;
   const items = sesItems(r);
   if(!items.length){ toast('Esta rutina no tiene ejercicios'); return; }
-  audio(); closePlay();
+  audio(); closePlay(); if(MT.run){ mStop(); toast('Metrónomo parado: la sesión lleva el suyo'); }
   S = { rid, name: rName(r), items, i: 0, phase: 'prep', left: 0, running: false, t0: Date.now(), done: {} };
   ses.innerHTML = `<div class="pk" role="dialog"><div class="pkh"><span>${esc(S.name)}</span><button data-sx="1">Terminar</button></div><div id="sbody"></div></div>`;
   ses.classList.add('open'); wake(true); startEx();
@@ -844,6 +897,155 @@ edit.addEventListener('click', e=>{
   if(act === 'del'){ if(!confirm('¿Eliminar «' + ED.x.n + '»?' + (ED.x.own ? '' : '\n\nEs de ejemplo: lo puedes recuperar desde el menú ⋯.'))) return; if(ED.x.own) delete ejs[id]; else ejs[id] = { del: 1 }; saveE(); rebuild(); closeEdit(); rerender(); toast('Eliminado'); }
 });
 
+/* --- metrónomo flotante: ventana con todos los ajustes; al cerrarla se queda como barra abajo --- */
+const met = $('#met'), mbar = $('#mbar');
+const MSUBS = [[1, 'sin'], [2, 'corcheas'], ['sw', 'swing'], [3, 'tresillos'], [4, 'semicorcheas'], [6, 'seisillos'], [8, 'fusas']];
+const MDEF = { bpm: 90, beats: 4, acc: [3, 2, 2, 2], sub: 1, swing: false, snd: 'clic', vol: .8, subVol: .5, trn: { on: false, add: 5, every: 4, to: 140 }, gap: { on: false, play: 2, mute: 2 }, tmin: 0 };
+let M = Object.assign(JSON.parse(JSON.stringify(MDEF)), load('dd_met', {}));
+let mPresets = load('dd_metp', {});
+const MT = { run: false, next: 0, tick: 0, q: [], linked: false, t0: 0, bar: false, taps: [] };
+function mFix(){
+  M.bpm = clamp(Math.round(+M.bpm || 90), 20, 300); M.beats = clamp(Math.round(+M.beats || 4), 1, 12);
+  if(![1, 2, 3, 4, 6, 8].includes(+M.sub)) M.sub = 1; M.sub = +M.sub; if(M.sub !== 2) M.swing = false;
+  const a = Array.isArray(M.acc) ? M.acc : []; M.acc = Array.from({ length: M.beats }, (_, i)=> a[i] != null ? clamp(+a[i], 0, 3) : (i === 0 ? 3 : 2));
+  M.trn = Object.assign({}, MDEF.trn, M.trn); M.gap = Object.assign({}, MDEF.gap, M.gap);
+}
+mFix();
+function mSave(){ put('dd_met', M); }
+function savePresets(){ put('dd_metp', mPresets); dirty(); }
+const tName = b=> b < 40 ? 'Grave' : b < 60 ? 'Largo' : b < 66 ? 'Larghetto' : b < 76 ? 'Adagio' : b < 108 ? 'Andante' : b < 120 ? 'Moderato' : b < 156 ? 'Allegro' : b < 176 ? 'Vivace' : b < 200 ? 'Presto' : 'Prestissimo';
+const subName = ()=> M.swing ? 'swing' : M.sub === 1 ? '' : SUBS[M.sub];
+function mSound(t, kind){
+  if(!ac) return;
+  const lvl = (kind === 'sub' ? .45 * M.subVol : [0, .3, .65, 1][kind]) * M.vol; if(lvl <= 0) return;
+  const o = ac.createOscillator(), g = ac.createGain(); let f, dec = .045;
+  if(M.snd === 'madera'){ o.type = 'triangle'; f = kind === 3 ? 1250 : kind === 'sub' ? 1700 : 880; dec = .07; }
+  else if(M.snd === 'pitido'){ o.type = 'square'; f = kind === 3 ? 1760 : kind === 'sub' ? 2200 : 1320; dec = .06; }
+  else { o.type = 'sine'; f = kind === 3 ? 1600 : kind === 'sub' ? 2300 : 1050; }
+  const pk = Math.max(.0002, lvl * (M.snd === 'pitido' ? .3 : .8));
+  o.frequency.value = f; g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(pk, t + .002); g.gain.exponentialRampToValueAtTime(.0001, t + dec);
+  o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + dec + .02);
+}
+const stepDur = k=>{ const spb = 60 / M.bpm; return M.swing ? (k % 2 === 0 ? 2 / 3 : 1 / 3) * spb : spb / M.sub; };
+setInterval(()=>{
+  if(!MT.run) return;
+  if(M.tmin && Date.now() - MT.t0 >= M.tmin * 60000){ mStop(); toast('Tiempo cumplido'); return; }
+  while(MT.next < now() + .12){
+    const sub = M.sub, k = MT.tick % sub, beat = Math.floor(MT.tick / sub) % M.beats, bar = Math.floor(MT.tick / (sub * M.beats));
+    const muted = M.gap.on && bar % (M.gap.play + M.gap.mute) >= M.gap.play;
+    if(!muted) mSound(MT.next, k === 0 ? M.acc[beat] : 'sub');
+    MT.q.push({ t: MT.next, tick: MT.tick, beat, k, muted });
+    MT.next += stepDur(k); MT.tick++;
+    if(MT.tick % (sub * M.beats) === 0 && M.trn.on){ const bars = MT.tick / (sub * M.beats); if(bars % Math.max(1, M.trn.every) === 0 && M.bpm < M.trn.to){ M.bpm = Math.min(M.trn.to, M.bpm + Math.max(1, M.trn.add)); mSave(); MT.dirtyBpm = true; } }
+  }
+}, 25);
+function mFrame(){
+  requestAnimationFrame(mFrame);
+  if(!MT.run || !MT.q.length) return;
+  const n = now(); let v = null;
+  while(MT.q.length && MT.q[0].t <= n){
+    v = MT.q.shift();
+    if(MT.linked && pl){ const i = v.tick % pl.steps.length; plShow(i); }
+  }
+  if(!v) return;
+  if(MT.dirtyBpm){ MT.dirtyBpm = false; mBpmUI(); }
+  if(v.k === 0){
+    document.querySelectorAll('#met .mdot').forEach((d, i)=>{ d.classList.toggle('on', i === v.beat); d.classList.toggle('mu', v.muted); });
+    mbar.querySelectorAll('.mds i').forEach((d, i)=> d.classList.toggle('on', i === v.beat && !v.muted));
+  }
+  if(M.tmin){ const r = Math.max(0, M.tmin * 60 - (Date.now() - MT.t0) / 1000), el = $('#m-left'); if(el) el.textContent = Math.floor(r / 60) + ':' + String(Math.floor(r % 60)).padStart(2, '0'); }
+}
+requestAnimationFrame(mFrame);
+function mStart(){
+  if(S){ toast('Termina la sesión para usar este metrónomo'); return; }
+  audio(); MT.run = true; MT.tick = 0; MT.q = []; MT.next = now() + .12; MT.t0 = Date.now(); wake(true); mRenderLive();
+}
+function mStop(){ MT.run = false; MT.q = []; MT.linked = false; if(!S) wake(false); document.querySelectorAll('#met .mdot,#mbar .mds i').forEach(d=> d.classList.remove('on', 'mu')); const pk = play.querySelector('.plink'); if(pk) pk.classList.remove('on'); mRenderLive(); }
+function mRestart(){ if(MT.run){ MT.tick = 0; MT.q = []; MT.next = now() + .08; } }
+function linkPlayer(){
+  const x = pl.x; M.bpm = clamp(Math.round(bpmOf(x) * pl.spd), 20, 300); M.beats = x.beats || 4; M.sub = x.sub || 1; M.swing = false; M.gap.on = false; M.trn.on = false; mFix(); mSave();
+  plSetRun(false); MT.linked = true; $('.plink', play).classList.add('on');
+  if(MT.run) mRestart(); else mStart();
+  MT.bar = true; mRenderLive(); toast('Metrónomo a ' + M.bpm + ' bpm, al compás del ejercicio');
+}
+function mBpmUI(){
+  const b = $('#m-bpm'); if(b){ b.textContent = M.bpm; $('#m-tn').textContent = tName(M.bpm); $('#m-sl').value = M.bpm; }
+  const bv = $('.mbv b', mbar); if(bv) bv.textContent = M.bpm;
+}
+function setMBpm(v){ M.bpm = clamp(Math.round(v), 20, 300); mSave(); mBpmUI(); }
+function mRenderBar(){
+  const show = MT.bar && !met.classList.contains('open');
+  mbar.classList.toggle('open', show); document.body.classList.toggle('hasbar', show);
+  if(!show) return;
+  mbar.innerHTML = `<button class="mplay" data-m="play" aria-label="${MT.run ? 'Parar' : 'Empezar'}">${MT.run ? '❚❚' : '▶'}</button><button data-m="-1" aria-label="Más lento">−</button><span class="mbv"><b>${M.bpm}</b> <small>bpm</small></span><button data-m="+1" aria-label="Más rápido">+</button><span class="mds">${M.acc.map(a=> `<i class="a${a}"></i>`).join('')}</span><span class="mi">${M.beats}/4${subName() ? ' · ' + subName() : ''}${M.trn.on ? ' · ↗' : ''}${M.gap.on ? ' · silencios' : ''}</span><button data-m="open" aria-label="Abrir el metrónomo">⤢</button><button data-m="hide" aria-label="Cerrar la barra">×</button>`;
+}
+function mRenderLive(){ mRenderBar(); const p = $('#m-play'); if(p){ p.textContent = MT.run ? '❚❚ Parar' : '▶ Empezar'; } }
+function openMet(){ closeMenu(); met.classList.add('open'); mRender(); mRenderBar(); }
+function closeMet(){ met.classList.remove('open'); met.innerHTML = ''; MT.bar = true; mRenderBar(); }
+function mRender(){
+  if(!met.classList.contains('open')) return;
+  const y = met.querySelector('.pk') ? met.querySelector('.pk').scrollTop : 0;
+  const ch = (attr, val, cur, lab)=> `<button class="chip${cur ? ' on' : ''}" ${attr}="${val}">${lab}</button>`;
+  const pre = Object.entries(mPresets).sort((a, b)=> a[1].n.localeCompare(b[1].n));
+  met.innerHTML = `<div class="pk" role="dialog" aria-label="Metrónomo"><div class="pkh"><span>Metrónomo</span><button data-m="close">Cerrar</button></div><div class="mb">
+    <div class="mbig"><button data-m="-5">−5</button><button data-m="-1">−1</button><div class="mbpm"><b id="m-bpm">${M.bpm}</b><small><span id="m-tn">${tName(M.bpm)}</span> · bpm</small></div><button data-m="+1">+1</button><button data-m="+5">+5</button></div>
+    <input type="range" id="m-sl" min="20" max="300" value="${M.bpm}" aria-label="Tempo">
+    <div class="chips" style="justify-content:center"><button class="chip" data-m="tap" style="padding:10px 18px !important;font-weight:700">Tap</button><button class="chip go" id="m-play" data-m="play" style="padding:10px 18px !important">${MT.run ? '❚❚ Parar' : '▶ Empezar'}</button></div>
+    <div class="mdots">${M.acc.map((a, i)=> `<button class="mdot" data-a="${a}" data-mb="${i}" aria-label="Pulso ${i + 1}">${i + 1}</button>`).join('')}</div>
+    <div class="ehint" style="text-align:center">Toca un pulso para cambiar su fuerza: rojo fuerte, azul normal, claro suave, apagado en silencio.</div>
+    <div class="ef">Compás · pulsos por compás<div class="chips">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(k=> ch('data-mbt', k, k === M.beats, k)).join('')}</div></div>
+    <div class="ef">Subdivisión · lo que suena entre pulso y pulso<div class="chips">${MSUBS.map(([k, n])=> ch('data-msub', k, k === 'sw' ? M.swing : !M.swing && k === M.sub, n)).join('')}</div></div>
+    <div class="ef">Sonido<div class="chips">${['clic', 'madera', 'pitido'].map(k=> ch('data-msnd', k, M.snd === k, k)).join('')}</div>
+      <div class="mrow">Volumen <input type="range" min="0" max="1" step=".05" value="${M.vol}" data-mrange="vol" aria-label="Volumen"></div>
+      <div class="mrow">Subdivisión <input type="range" min="0" max="1" step=".05" value="${M.subVol}" data-mrange="subVol" aria-label="Volumen de la subdivisión"></div></div>
+    <div class="ef">Subir el tempo poco a poco<div class="chips">${ch('data-mtog', 'trn', M.trn.on, M.trn.on ? 'Activado' : 'Desactivado')}</div>
+      <div class="mrow">Sube <input type="number" min="1" max="30" value="${M.trn.add}" data-mnum="trn.add"> bpm cada <input type="number" min="1" max="64" value="${M.trn.every}" data-mnum="trn.every"> compases, hasta <input type="number" min="20" max="300" value="${M.trn.to}" data-mnum="trn.to"></div></div>
+    <div class="ef">Compases en silencio · para ver si mantienes el tempo tú solo<div class="chips">${ch('data-mtog', 'gap', M.gap.on, M.gap.on ? 'Activado' : 'Desactivado')}</div>
+      <div class="mrow">Suena <input type="number" min="1" max="16" value="${M.gap.play}" data-mnum="gap.play"> compases y calla <input type="number" min="1" max="16" value="${M.gap.mute}" data-mnum="gap.mute"></div></div>
+    <div class="ef">Temporizador · se para solo${M.tmin && MT.run ? ' · quedan <span id="m-left"></span>' : ''}<div class="chips">${[0, 2, 5, 10, 15, 20, 30].map(k=> ch('data-mtim', k, M.tmin === k, k ? k + ' min' : 'sin límite')).join('')}</div></div>
+    <div class="ef">Ajustes guardados<div class="chips">${pre.length ? pre.map(([id, p])=> `<span class="mpre"><button class="chip" data-mpre="${id}">${esc(p.n)} · ${p.s.bpm}</button><button class="chip mpx" data-mpdel="${id}" aria-label="Borrar ${esc(p.n)}">×</button></span>`).join('') : '<span style="opacity:.5;font-weight:400">Nada guardado todavía.</span>'}</div>
+      <div class="mrow"><input type="text" id="m-pn" placeholder="nombre, p. ej. Bulerías lento" autocomplete="off"><button class="chip go" data-m="psave">Guardar</button></div></div>
+  </div></div>`;
+  met.querySelector('.pk').scrollTop = y;
+}
+function mTap(){
+  const t = performance.now(); MT.taps = MT.taps.filter(x=> t - x < 2500); MT.taps.push(t);
+  if(MT.taps.length >= 2){ const d = MT.taps.slice(-5), iv = (d[d.length - 1] - d[0]) / (d.length - 1); setMBpm(60000 / iv); }
+}
+function mAct(a){
+  if(a === 'play'){ if(MT.run) mStop(); else mStart(); return; }
+  if(a === 'close'){ closeMet(); return; }
+  if(a === 'open'){ openMet(); return; }
+  if(a === 'hide'){ mStop(); MT.bar = false; mRenderBar(); return; }
+  if(a === 'tap'){ mTap(); return; }
+  if(a === 'psave'){
+    const n = ($('#m-pn').value || '').trim() || (M.bpm + ' bpm · ' + M.beats + '/4');
+    mPresets['p' + Date.now().toString(36)] = { n, s: JSON.parse(JSON.stringify(Object.assign({}, M, { tmin: 0 }))) }; savePresets(); mRender(); toast('Guardado'); return;
+  }
+  if(/^[+-]\d+$/.test(a)) setMBpm(M.bpm + +a);
+}
+function onMet(e){
+  const t = e.target;
+  if(t === met){ closeMet(); return; }
+  const m = t.closest('[data-m]'); if(m){ mAct(m.dataset.m); return; }
+  const mb = t.closest('[data-mb]'); if(mb){ const i = +mb.dataset.mb; M.acc[i] = M.acc[i] === 0 ? 3 : M.acc[i] - 1; mSave(); mb.dataset.a = M.acc[i]; mRenderBar(); return; }
+  const bt = t.closest('[data-mbt]'); if(bt){ M.beats = +bt.dataset.mbt; mFix(); mSave(); mRestart(); mRender(); mRenderBar(); return; }
+  const sb = t.closest('[data-msub]'); if(sb){ const k = sb.dataset.msub; if(k === 'sw'){ M.sub = 2; M.swing = true; } else { M.sub = +k; M.swing = false; } mSave(); mRestart(); mRender(); mRenderBar(); return; }
+  const sn = t.closest('[data-msnd]'); if(sn){ M.snd = sn.dataset.msnd; mSave(); mRender(); if(!MT.run){ audio(); mSound(now() + .02, 3); } return; }
+  const tg = t.closest('[data-mtog]'); if(tg){ const o = M[tg.dataset.mtog]; o.on = !o.on; mSave(); mRender(); mRenderBar(); return; }
+  const tm = t.closest('[data-mtim]'); if(tm){ M.tmin = +tm.dataset.mtim; MT.t0 = Date.now(); mSave(); mRender(); return; }
+  const pr = t.closest('[data-mpre]'); if(pr){ const p = mPresets[pr.dataset.mpre]; if(p){ M = Object.assign(JSON.parse(JSON.stringify(MDEF)), JSON.parse(JSON.stringify(p.s)), { tmin: M.tmin }); mFix(); mSave(); mRestart(); mRender(); mRenderBar(); toast(p.n); } return; }
+  const pd = t.closest('[data-mpdel]'); if(pd){ const p = mPresets[pd.dataset.mpdel]; if(p && confirm('¿Borrar «' + p.n + '»?')){ delete mPresets[pd.dataset.mpdel]; savePresets(); mRender(); } return; }
+}
+met.addEventListener('click', onMet);
+mbar.addEventListener('click', e=>{ const m = e.target.closest('[data-m]'); if(m) mAct(m.dataset.m); });
+met.addEventListener('input', e=>{
+  const t = e.target;
+  if(t.id === 'm-sl'){ setMBpm(+t.value); return; }
+  if(t.dataset.mrange){ M[t.dataset.mrange] = +t.value; mSave(); return; }
+  if(t.dataset.mnum){ const [o, k] = t.dataset.mnum.split('.'), v = Math.round(+t.value); if(v > 0){ M[o][k] = clamp(v, 1, 300); mSave(); } }
+});
+
 /* --- pestaña Rutinas --- */
 const nCards = r=> r.items.filter(x=> typeof x === 'string').length;
 const HB = (i, first)=> `<span class="hacts"><button data-hadd="${i}" title="Añadir ejercicios aquí" aria-label="Añadir ejercicios aquí">+</button>${first ? '' : `<button data-up="${i}" title="Subir" aria-label="Subir">↑</button>`}<button data-rm="${i}" title="Quitar" aria-label="Quitar">×</button></span>`;
@@ -982,7 +1184,7 @@ function menuAct(a){
   closeMenu();
   if(a === 'theme'){ const d = !document.documentElement.classList.contains('dark'); document.documentElement.classList.toggle('dark', d); try{ localStorage.setItem('dd_theme', d ? 'dark' : 'light'); }catch(e){} }
   if(a === 'export'){
-    const blob = new Blob([JSON.stringify({ format: 'dedos-datos', version: 1, updated: new Date().toISOString(), checks, routines, tempos, logs, ejs }, null, 1)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify({ format: 'dedos-datos', version: 1, updated: new Date().toISOString(), checks, routines, tempos, logs, ejs, metPresets: mPresets }, null, 1)], { type: 'application/json' });
     const u = URL.createObjectURL(blob), l = document.createElement('a'); l.href = u; l.download = 'dedos-datos-' + new Date().toISOString().slice(0, 10) + '.json'; document.body.appendChild(l); l.click(); l.remove(); setTimeout(()=> URL.revokeObjectURL(u), 2000);
     toast('Copia guardada');
   }
@@ -1003,6 +1205,7 @@ $('#imp').addEventListener('change', e=>{
       if(isMap(o.routines)){ snapR(); Object.entries(o.routines).forEach(([id, rr])=>{ if(!routines[id]) routines[id] = normR(rr); }); saveR(); }
       if(isMap(o.tempos)){ Object.assign(tempos, o.tempos); saveT(); }
       if(isMap(o.logs)){ Object.assign(logs, o.logs); saveLog(); }
+      if(isMap(o.metPresets)){ Object.entries(o.metPresets).forEach(([id, v])=>{ if(!mPresets[id]) mPresets[id] = v; }); savePresets(); }
       if(isMap(o.ejs)){ Object.entries(o.ejs).forEach(([id, v])=>{ if(!ejs[id]) ejs[id] = v; }); saveE(); rebuild(); }
       saveChecks(); rerender(); toast('Copia cargada');
     }catch(err){ toast('Ese archivo no es una copia de DEDOS'); }
@@ -1019,7 +1222,7 @@ document.addEventListener('click', e=>{
   const at = t.closest('[data-addto]'); if(at){ closeMenu(); addTo(at.dataset.addto, at.dataset.addn); return; }
   if(!t.closest('#menu') && !t.closest('[data-v=menu]')) closeMenu();
   if(!t.closest('#app')) return;
-  const v = t.closest('[data-v]'); if(v){ const a = v.dataset.v; if(a === 'back') back(); if(a === 'fwd') fwd(); if(a === 'home'){ q = ''; qIn.value = ''; if(cur().t !== 'root') go({ t: 'root', ty: ty() }); } if(a === 'menu') openMenu(v); return; }
+  const v = t.closest('[data-v]'); if(v){ const a = v.dataset.v; if(a === 'back') back(); if(a === 'fwd') fwd(); if(a === 'home'){ q = ''; qIn.value = ''; if(cur().t !== 'root') go({ t: 'root', ty: ty() }); } if(a === 'menu') openMenu(v); if(a === 'met') openMet(); return; }
   const fam = t.closest('[data-fam]'); if(fam){ go({ t: 'fam', id: fam.dataset.fam }); return; }
   const lv = t.closest('[data-lv]'); if(lv){ const k = +lv.dataset.lv; filt.l = filt.l === k ? null : k; rerender(); return; }
   if(t.closest('[data-all]')){ go({ t: 'all' }); return; }
@@ -1063,6 +1266,7 @@ document.addEventListener('keydown', e=>{
   if(e.key !== 'Escape') return;
   if(document.getElementById('ml-gh').classList.contains('open')) return;
   if(ses.classList.contains('open')) return;
+  if(met.classList.contains('open')){ closeMet(); return; }
   if(play.classList.contains('open')){ closePlay(); return; }
   if(edit.classList.contains('open')){ closeEdit(); return; }
   if(pick.classList.contains('open')){ closePick(); return; }
@@ -1073,12 +1277,12 @@ document.addEventListener('keydown', e=>{
   back();
 });
 window.ddApply = function(m){
-  checks = m.c || {}; tempos = m.t || {}; logs = m.g || {}; ejs = m.x || {}; put('dd_ejs', ejs); rebuild(); routines = {}; Object.entries(m.r || {}).forEach(([id, r])=> routines[id] = normR(r));
+  checks = m.c || {}; tempos = m.t || {}; logs = m.g || {}; ejs = m.x || {}; put('dd_ejs', ejs); mPresets = m.p || {}; put('dd_metp', mPresets); if(met.classList.contains('open')) mRender(); rebuild(); routines = {}; Object.entries(m.r || {}).forEach(([id, r])=> routines[id] = normR(r));
   put(CK, checks); put(RK, routines); put(TK, tempos); put(GK, logs);
   const a = document.activeElement; if(a && a.matches && a.matches('[data-rname],[data-rnote],[data-hed],#pkq')) return;
   if(pick.classList.contains('open')) drawPick(); if(!S) rerender();
 };
-window.ddData = ()=> ({ c: checks, r: routines, t: tempos, g: logs, x: ejs });
+window.ddData = ()=> ({ c: checks, r: routines, t: tempos, g: logs, x: ejs, p: mPresets });
 window.ddNormR = normR;
 
 render(true);
@@ -1147,7 +1351,7 @@ function loadBase(){ try{ return JSON.parse(localStorage.getItem(BASEK) || 'null
 function saveBase(o){ try{ localStorage.setItem(BASEK, S(o)); }catch(e){} }
 const isMap = o=> o && typeof o === 'object' && !Array.isArray(o);
 const sortMap = (m, f)=>{ const o = {}; Object.keys(isMap(m) ? m : {}).sort().forEach(k=> o[k] = f ? f(m[k]) : m[k]); return o; };
-const snap = ()=>{ const d = window.ddData(); return { c: sortMap(d.c, v=> v || ''), r: sortMap(d.r, window.ddNormR), t: sortMap(d.t), g: sortMap(d.g), x: sortMap(d.x) }; };
+const snap = ()=>{ const d = window.ddData(); return { c: sortMap(d.c, v=> v || ''), r: sortMap(d.r, window.ddNormR), t: sortMap(d.t), g: sortMap(d.g), x: sortMap(d.x), p: sortMap(d.p) }; };
 const valid = o=> !!o && o.format === 'dedos-datos' && isMap(o.checks);
 
 /* ---------- fusión a tres bandas: lo último común (b), lo de aquí (l) y lo de GitHub (r) ---------- */
@@ -1183,15 +1387,15 @@ async function sync(){
         if(!txt){ const rr = await ghApi('/contents/' + path + '?ref=' + encodeURIComponent(gh.branch), { raw: true }); txt = await rr.text(); }
         let o = null; try{ o = JSON.parse(txt); }catch(e){}
         if(!valid(o)) throw new Error('el archivo ' + FILE + ' de GitHub no es de DEDOS');
-        remote = { c: sortMap(o.checks, v=> v || ''), r: sortMap(o.routines, window.ddNormR), t: sortMap(o.tempos), g: sortMap(o.logs), x: sortMap(o.ejs) };
+        remote = { c: sortMap(o.checks, v=> v || ''), r: sortMap(o.routines, window.ddNormR), t: sortMap(o.tempos), g: sortMap(o.logs), x: sortMap(o.ejs), p: sortMap(o.metPresets) };
       }
       const base = loadBase(), local = snap();
       let merged;
       if(remote && firstMode === 'replace') merged = remote;
-      else if(remote) merged = { c: mapMerge(base && base.c, local.c, remote.c), r: mapMerge(base && base.r, local.r, remote.r), t: mapMerge(base && base.t, local.t, remote.t), g: mapMerge(base && base.g, local.g, remote.g), x: mapMerge(base && base.x, local.x, remote.x) };
+      else if(remote) merged = { c: mapMerge(base && base.c, local.c, remote.c), r: mapMerge(base && base.r, local.r, remote.r), t: mapMerge(base && base.t, local.t, remote.t), g: mapMerge(base && base.g, local.g, remote.g), x: mapMerge(base && base.x, local.x, remote.x), p: mapMerge(base && base.p, local.p, remote.p) };
       else merged = local;
       if(!remote || S(merged) !== S(remote)){
-        const body = { message: 'DEDOS: ' + new Date().toLocaleString('es-ES'), content: b64enc(S({ format: 'dedos-datos', version: 1, updated: new Date().toISOString(), checks: merged.c, routines: merged.r, tempos: merged.t, logs: merged.g, ejs: merged.x }, null, 1)), branch: gh.branch };
+        const body = { message: 'DEDOS: ' + new Date().toLocaleString('es-ES'), content: b64enc(S({ format: 'dedos-datos', version: 1, updated: new Date().toISOString(), checks: merged.c, routines: merged.r, tempos: merged.t, logs: merged.g, ejs: merged.x, metPresets: merged.p }, null, 1)), branch: gh.branch };
         if(sha) body.sha = sha;
         const p = await ghApi('/contents/' + path, { method: 'PUT', body });
         if(p.status === 409 || p.status === 422) continue;
