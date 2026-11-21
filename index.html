@@ -207,6 +207,11 @@ svg{display:block;}
 .eg td{padding:2px;text-align:center;}
 .eg .en{font-size:12px;opacity:.5;padding-right:6px;font-variant-numeric:tabular-nums;text-align:right;min-width:22px;}
 .eg .dv{border-left:2px solid var(--ink);padding-left:6px;}
+.eg tr.ebt td{border-top:1px solid var(--b);}
+.eg tr.ebar td{border-top:2px solid var(--ink);}
+.eg tr.ebt td,.eg tr.ebar td{padding-top:4px;}
+.eg .en b{font-weight:800;opacity:1;}
+.eg .en{opacity:.6;}
 .ec{width:40px;height:34px;border-radius:8px;background:var(--h) !important;font-size:14px;font-weight:700;color:#fff !important;}
 .eg.asym .ec{width:25px;font-size:12px;}
 .eg.asym td{padding:2px 1px;}
@@ -295,7 +300,7 @@ svg{display:block;}
 <input type="file" id="imp" accept=".json,application/json" style="display:none">
 <script>
 // ── DATOS ──
-// Cada ejercicio: [nombre, nivel (1 básico · 4 experto), qué es, cómo se hace, patrón mano izquierda, patrón mano derecha, tempo inicial (bpm)]
+// Cada ejercicio: [nombre, nivel (1 básico · 4 experto), qué es, cómo se hace, patrón mano izquierda, patrón mano derecha, tempo (bpm de la negra), subdivisión (pasos por pulso, 1 si no se pone), pulsos por compás (4 si no se pone)]
 // Patrones: dedos del 1 (pulgar) al 5 (meñique), uno por pulso, separados por espacios. Juntos = a la vez (13). Un punto = pulso de descanso.
 const DATA = [
 { id:"calentamiento", name:"Calentamiento", desc:"mecánicos y siempre iguales: despiertan los dedos y ganan rango", color:"#26a69a", subs:[
@@ -335,14 +340,14 @@ const DATA = [
     ["Canon", 3, "la derecha hace lo mismo que la izquierda, pero un pulso tarde", "como cantar en canon", "2 3 4 5", "5 2 3 4", 40],
   ]},
   { name:"Ritmo", items:[
-    ["Dos contra uno", 2, "una mano toca el doble de rápido que la otra", "la izquierda va a medio tempo", "3 .", "2 3", 60],
-    ["Polirritmo 3 contra 2", 4, "tres golpes en una mano contra dos en la otra, en el mismo tiempo", "empieza a ¼× en el reproductor y cuenta 1 2 3 4 5 6", "3 . 3 . 3 .", "3 . . 3 . .", 90],
+    ["Dos contra uno", 2, "una mano toca el doble de rápido que la otra", "la derecha en corcheas, la izquierda en negras", "3 .", "2 3", 60, 2],
+    ["Polirritmo 3 contra 2", 4, "tres golpes en una mano contra dos en la otra, en el mismo tiempo", "la derecha marca los pulsos; la izquierda hace un tresillo que ocupa dos pulsos. Empieza a ¼×", "3 . 3 . 3 .", "3 . . 3 . .", 40, 3, 2],
   ]},
 ]},
 { id:"velocidad", name:"Velocidad", desc:"golpes cortos y rápidos, con descanso para soltar la tensión", color:"#e91e63", subs:[
   { name:"Ráfagas", items:[
-    ["Ráfaga de trino", 2, "cuatro golpes rápidos y descanso", "rápido pero suelto; el descanso es para relajar", "2 3 2 3 . . . .", "2 3 2 3 . . . .", 120],
-    ["Doble toque", 2, "dos golpes muy seguidos con dedos distintos", "como dos botones casi a la vez en el mando", "2 3 . .", "2 3 . .", 120],
+    ["Ráfaga de trino", 2, "cuatro golpes rápidos y descanso", "rápido pero suelto; el descanso es para relajar", "2 3 2 3 . . . .", "2 3 2 3 . . . .", 60, 4, 2],
+    ["Doble toque", 2, "dos golpes muy seguidos con dedos distintos", "como dos botones casi a la vez en el mando", "2 3 . .", "2 3 . .", 60, 4, 1],
     ["Pulgar a dos puntos", 3, "el pulgar salta entre dos marcas de la mesa", "no se arrastra: salta, como de un botón a otro", "1 .", "1 .", 100],
   ]},
 ]},
@@ -440,12 +445,13 @@ else Object.keys(routines).forEach(id=> routines[id] = normR(routines[id]));
 let checks = load(CK, {}), tempos = load(TK, {}), logs = load(GK, {}), ejs = load('dd_ejs', {});
 function saveE(){ put('dd_ejs', ejs); dirty(); }
 /* ejs: { id: ejercicio propio, o cambios a uno de ejemplo, o {del:1} si se ha borrado } */
-const normE = o=> ({ n: String(o.n || 'Sin nombre'), l: clamp(+o.l || 1, 1, 4), d: String(o.d || ''), h: String(o.h || ''), L: String(o.L || '.'), R: String(o.R || '.'), bpm0: clamp(+o.bpm0 || 60, 20, 300) });
+const SUBS = { 1: 'negras', 2: 'corcheas', 3: 'tresillos', 4: 'semicorcheas', 6: 'seisillos', 8: 'fusas' };
+const normE = o=> ({ n: String(o.n || 'Sin nombre'), l: clamp(+o.l || 1, 1, 4), d: String(o.d || ''), h: String(o.h || ''), L: String(o.L || '.'), R: String(o.R || '.'), bpm0: clamp(+o.bpm0 || 60, 20, 300), sub: SUBS[+o.sub] ? +o.sub : 1, beats: clamp(+o.beats || 4, 1, 12) });
 function rebuild(){
   ALL = [];
   DATA.forEach(f=> f.subs.forEach(s=> s.items.forEach(a=>{
     const id = a[0], o = ejs[id]; if(o && o.del) return;
-    const x = { id, n: a[0], l: a[1], d: a[2], h: a[3], L: a[4], R: a[5], bpm0: a[6], f, s, own: false, edited: !!o };
+    const x = { id, n: a[0], l: a[1], d: a[2], h: a[3], L: a[4], R: a[5], bpm0: a[6], sub: a[7] || 1, beats: a[8] || 4, f, s, own: false, edited: !!o };
     if(o){ Object.assign(x, normE(o)); const nf = FAMS.get(o.fam); if(nf && nf !== f){ x.f = nf; x.s = USUB[nf.id]; } }
     ALL.push(x);
   })));
@@ -486,8 +492,10 @@ function steps(x){
 const tok = (a, sg)=> a.length ? a.map(i=> sg + i).join('') : '·';
 const isSym = x=> x.L.trim() === x.R.trim();
 function notation(x){
-  if(isSym(x)) return parse(x.L).map(a=> tok(a, '')).join('  ');
-  return steps(x).map(st=> st.L.length || st.R.length ? (st.L.length ? tok(st.L, '−') : '') + (st.R.length ? tok(st.R, '+') : '') : '·').join('  ');
+  const t = isSym(x) ? parse(x.L).map(a=> tok(a, '')) : steps(x).map(st=> st.L.length || st.R.length ? (st.L.length ? tok(st.L, '−') : '') + (st.R.length ? tok(st.R, '+') : '') : '·');
+  const g = (x.sub || 1) > 1 ? x.sub : (x.beats || 4), out = [];
+  for(let i = 0; i < t.length; i += g) out.push(t.slice(i, i + g).join(' '));
+  return out.join('  |  ');
 }
 function capOf(st){
   const same = st.L.join() === st.R.join();
@@ -573,7 +581,7 @@ function chipsHTML(){
 }
 function card(x, showFam, ri){
   const d = isDone(x.id), inR = ri != null;
-  let sb = `<span class="sb">${esc(NLAB[x.l] + (showFam ? ' · ' + x.f.name : '') + ' · ' + bpmOf(x) + ' bpm')}</span>`;
+  let sb = `<span class="sb">${esc(NLAB[x.l] + (showFam ? ' · ' + x.f.name : '') + ' · ' + bpmOf(x) + ' bpm' + ((x.sub || 1) > 1 ? ' · ' + SUBS[x.sub] : ''))}</span>`;
   const line = (tags, txt)=> `<span class="sb2"><i>${tags}</i><span>${esc(txt)}</span></span>`;
   sb += line('<b class="am">Cómo</b>', x.h);
   sb += line(isSym(x) ? '<b class="iz">SIM</b>' : '<b class="de">ASIM</b>', notation(x));
@@ -588,11 +596,11 @@ function openPlay(a){
   const x = typeof a === 'string' ? BYN.get(a) : a; if(!x) return; const name = x.n;
   const st = steps(x), bpm = bpmOf(x);
   play.innerHTML = `<div class="pk" role="dialog"><div class="pkh"><span>${esc(name)}</span><button data-plx="1">Cerrar</button></div><div class="padwrap">${HANDS}</div>
-    <div class="plcap"></div><div class="plkeys"></div><div class="pldots">${st.map((_, i)=> `<i data-i="${i}"></i>`).join('')}</div>
+    <div class="plcap"></div><div class="plkeys"></div><div class="pldots">${st.map((_, i)=> `<i data-i="${i}"${i && i % (x.sub || 1) === 0 && (x.sub || 1) > 1 ? ' style="margin-left:8px"' : ''}></i>`).join('')}</div>
     <div class="plctl"><button data-pl="prev" aria-label="Paso anterior">‹</button><button data-pl="toggle" class="pltog" aria-label="Pausa">❚❚</button><button data-pl="next" aria-label="Paso siguiente">›</button><span class="sep"></span>${[1, .5, .25].map(s=> `<button class="chip${s === 1 ? ' on' : ''}" data-spd="${s}">${s === 1 ? '1×' : s === .5 ? '½×' : '¼×'}</button>`).join('')}</div>
-    <div class="plhint">1× = ${bpm} bpm, tu tempo · manos sobre la mesa, vistas desde arriba</div></div>`;
+    <div class="plhint">1× = ${bpm} bpm${(x.sub || 1) > 1 ? ' en ' + SUBS[x.sub] : ''}, tu tempo · manos sobre la mesa, vistas desde arriba</div></div>`;
   play.classList.add('open');
-  pl = { steps: st, i: -1, spd: 1, run: true, t: 0, ms: 60000 / bpm, svg: $('svg', play) };
+  pl = { steps: st, i: -1, spd: 1, run: true, t: 0, ms: 60000 / bpm / (x.sub || 1), svg: $('svg', play) };
   plNext();
 }
 function plShow(i){
@@ -649,7 +657,7 @@ function sesHTML(){
   const it = S.items[S.i];
   return `<div class="ssec">${esc(it.sec || 'ejercicio')} · ${S.i + 1}/${S.items.length}</div><div class="sname">${esc(it.x.n)}</div><div class="sdesc">${esc(it.x.h)}</div>
     <div class="padwrap">${HANDS}</div><div class="plcap"></div><div class="plkeys"></div>
-    <div class="stimer prep">4</div>
+    <div class="stimer prep">${it.x.beats || 4}</div>
     <div class="plctl" id="sctl"><button data-s="prev" aria-label="Ejercicio anterior">‹</button><button data-s="toggle" class="stog" aria-label="Pausa">❚❚</button><button data-s="next" aria-label="Siguiente">›</button><span class="sep"></span><button data-s="dn" aria-label="Más lento">−</button><span class="bpmv"><span id="bv">${bpmOf(it.x)}</span> <small>bpm</small></span><button data-s="up" aria-label="Más rápido">+</button></div>
     <div class="srate" id="srate"><p>¿Cómo ha salido?</p><div class="chips"><button class="chip" data-rate="-1">Con fallos · −5</button><button class="chip" data-rate="0">Bien</button><button class="chip" data-rate="1">Limpio · +5</button></div>
       <div class="chips"><button class="chip${isDone(it.x.id) ? ' on' : ''}" data-sck="1">✓ Ya lo tengo automatizado</button></div></div>
@@ -658,14 +666,18 @@ function sesHTML(){
 }
 function startEx(){
   const sb = $('#sbody', ses); sb.innerHTML = sesHTML();
-  S.svg = $('svg', sb); S.st = steps(S.items[S.i].x);
+  S.svg = $('svg', sb); S.st = steps(S.items[S.i].x); S.ci = S.items[S.i].x.beats || 4;
   S.phase = 'prep'; S.left = S.items[S.i].secs; S.running = true; kb = 0; vq = []; nextT = now() + .2;
   paint(S.svg); const c = capOf(S.st[0]); $('.plcap', sb).textContent = 'empieza: ' + c[0]; $('.plkeys', sb).textContent = c[1] || ' ';
 }
 setInterval(()=>{
   if(!S || !S.running || S.phase === 'rate' || S.phase === 'done') return;
-  const spb = 60 / bpmOf(S.items[S.i].x), n = S.st.length;
-  while(nextT < now() + .12){ const run = kb >= 4; click(nextT, run ? (kb - 4) % n === 0 : kb === 0); vq.push({ t: nextT, k: kb }); kb++; nextT += spb; }
+  const x = S.items[S.i].x, spb = 60 / bpmOf(x), sub = x.sub || 1, bt = x.beats || 4, ci = S.ci;
+  while(nextT < now() + .12){
+    if(kb < ci){ click(nextT, kb === 0); vq.push({ t: nextT, k: kb }); kb++; nextT += spb; continue; }
+    const st = kb - ci; if(st % sub === 0) click(nextT, (st / sub) % bt === 0);
+    vq.push({ t: nextT, k: kb }); kb++; nextT += spb / sub;
+  }
 }, 25);
 function frame(ts){
   requestAnimationFrame(frame);
@@ -674,8 +686,8 @@ function frame(ts){
   const sb = $('#sbody', ses), tm = $('.stimer', sb), n = now();
   while(vq.length && vq[0].t <= n){
     const v = vq.shift();
-    if(v.k < 4){ S.phase = 'prep'; tm.textContent = 4 - v.k; tm.classList.add('prep'); }
-    else{ if(S.phase !== 'run'){ S.phase = 'run'; tm.classList.remove('prep'); } const b = v.k - 4, st = S.st[b % S.st.length]; paint(S.svg, st); const c = capOf(st); $('.plcap', sb).textContent = c[0]; $('.plkeys', sb).textContent = c[1] || ' '; }
+    if(v.k < S.ci){ S.phase = 'prep'; tm.textContent = S.ci - v.k; tm.classList.add('prep'); }
+    else{ if(S.phase !== 'run'){ S.phase = 'run'; tm.classList.remove('prep'); } const b = v.k - S.ci, st = S.st[b % S.st.length]; paint(S.svg, st); const c = capOf(st); $('.plcap', sb).textContent = c[0]; $('.plkeys', sb).textContent = c[1] || ' '; }
   }
   if(S.phase === 'run'){ S.left -= dt; if(S.left <= 0){ toRate(); return; } const s = Math.ceil(S.left); tm.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
 }
@@ -721,7 +733,8 @@ function gridFrom(x){
 function openEdit(id, fam){
   const x = id ? BYN.get(id) : null; if(id && !x) return;
   const g = x ? gridFrom(x) : { sym: true, rows: [0, 1, 2, 3].map(()=> ({ L: [], R: [] })) };
-  ED = { id, x, sym: g.sym, rows: g.rows };
+  ED = { id, x, sym: g.sym, rows: g.rows, sub: x ? x.sub || 1 : 1, beats: x ? x.beats || 4 : 4 };
+  while(ED.rows.length % ED.sub) ED.rows.push({ L: [], R: [] });
   const f0 = x ? x.f.id : (fam || DATA[0].id), lv = x ? x.l : 1;
   edit.innerHTML = `<div class="pk" role="dialog" aria-label="${x ? 'Editar ejercicio' : 'Nuevo ejercicio'}"><div class="pkh"><span>${x ? 'Editar ejercicio' : 'Nuevo ejercicio'}</span><button data-ex="close" style="background:var(--h) !important;color:inherit !important">Cancelar</button><button data-ex="save">Guardar</button></div>
   <div class="edb">
@@ -729,23 +742,30 @@ function openEdit(id, fam){
     <label class="ef">Qué es<input id="e-d" value="${esc(x ? x.d : '')}" placeholder="en una frase…" autocomplete="off"></label>
     <label class="ef">Cómo se hace<input id="e-h" value="${esc(x ? x.h : '')}" placeholder="lo que hay que vigilar…" autocomplete="off"></label>
     <div class="ef2"><label class="ef">Familia<select id="e-f">${DATA.map(f=> `<option value="${f.id}"${f.id === f0 ? ' selected' : ''}>${esc(f.name)}</option>`).join('')}</select></label>
-    <label class="ef">Tempo (bpm)<input id="e-b" type="number" inputmode="numeric" min="20" max="300" value="${x ? x.bpm0 : 60}"></label></div>
+    <label class="ef">Tempo (bpm de la negra)<input id="e-b" type="number" inputmode="numeric" min="20" max="300" value="${x ? x.bpm0 : 60}"></label></div>
     <div class="ef">Nivel<div class="chips" id="e-l">${[1, 2, 3, 4].map(k=> `<button class="chip${k === lv ? ' on' : ''}" data-elv="${k}" style="${k === lv ? '' : 'box-shadow:inset 0 -3px 0 ' + NFILL[k]}">${NLAB[k]}</button>`).join('')}</div></div>
-    <div class="ef">Pasos<div class="chips"><button class="chip" data-esym="1">Simétrico</button><button class="chip" data-esym="0">No simétrico</button></div></div>
+    <div class="ef">Compás<div class="chips" id="e-bt">${[2, 3, 4, 5, 6, 7].map(k=> `<button class="chip" data-ebt="${k}">${k}/4</button>`).join('')}</div></div>
+    <div class="ef">Subdivisión · cuántas filas tiene cada pulso<div class="chips" id="e-sub">${Object.entries(SUBS).map(([k, n])=> `<button class="chip" data-esub="${k}">${n}${k > 1 ? ' · ' + k : ''}</button>`).join('')}</div></div>
+    <div class="ef">Manos<div class="chips"><button class="chip" data-esym="1">Simétrico</button><button class="chip" data-esym="0">No simétrico</button></div></div>
     <div class="egw" id="egw"></div>
-    <div class="chips" style="padding-top:8px;justify-content:center"><button class="chip" data-eadd="1">+ fila</button><button class="chip go" data-eplay="1">▶ Probar</button></div>
-    <div class="ehint">Toca una casilla para marcarla. Cada fila es un pulso; una fila vacía es un descanso. Dedos del 1 (pulgar) al 5 (meñique): la izquierda en negativo y la derecha en positivo.</div>
+    <div class="chips" style="padding-top:8px;justify-content:center"><button class="chip" data-eadd="1">+ pulso</button><button class="chip" data-eadd="bar">+ compás</button><button class="chip" data-edel="1">− pulso</button><button class="chip go" data-eplay="1">▶ Probar</button></div>
+    <div class="ehint">Cada fila es un paso; los números son los pulsos (1 2 3 4) y en medio se cuentan las subdivisiones (1 y · 1 e y a · 1 y a en tresillos). La línea fina separa pulsos y la gruesa, compases. Una fila vacía es un silencio. Dedos del 1 (pulgar) al 5 (meñique): izquierda en negativo, de −5 a −1, y derecha en positivo, de +1 a +5, como las manos sobre la mesa.</div>
     ${x ? `<div class="chips" style="padding-top:14px">${x.edited && !x.own ? '<button class="chip" data-ex="orig">↺ Volver al original</button>' : ''}<button class="chip" data-ex="del" style="color:#d32f2f">Eliminar ejercicio</button></div>` : ''}
   </div></div>`;
   edit.classList.add('open'); drawGrid();
 }
 function drawGrid(){
   edit.querySelectorAll('[data-esym]').forEach(b=> b.classList.toggle('on', (b.dataset.esym === '1') === ED.sym));
-  const cols = ED.sym ? [1, 2, 3, 4, 5].map(i=> ['L', i, String(i)]) : [1, 2, 3, 4, 5].map(i=> ['L', i, '−' + i]).concat([1, 2, 3, 4, 5].map(i=> ['R', i, '+' + i]));
+  edit.querySelectorAll('[data-esub]').forEach(b=> b.classList.toggle('on', +b.dataset.esub === ED.sub));
+  edit.querySelectorAll('[data-ebt]').forEach(b=> b.classList.toggle('on', +b.dataset.ebt === ED.beats));
+  const cols = ED.sym ? [1, 2, 3, 4, 5].map(i=> ['L', i, String(i)]) : [5, 4, 3, 2, 1].map(i=> ['L', i, '−' + i]).concat([1, 2, 3, 4, 5].map(i=> ['R', i, '+' + i]));
+  const sub = ED.sub, bar = sub * ED.beats, SYL = { 1: [''], 2: ['', 'y'], 3: ['', 'y', 'a'], 4: ['', 'e', 'y', 'a'], 6: ['', '·', 'y', '·', 'a', '·'], 8: ['', '·', 'e', '·', 'y', '·', 'a', '·'] }[sub];
   const dv = c=> c[0] === 'R' && c[1] === 1 ? ' class="dv"' : '';
-  let h = `<table class="eg${ED.sym ? '' : ' asym'}"><thead><tr><th></th>${cols.map(c=> `<th${dv(c)}>${c[2]}</th>`).join('')}<th></th></tr></thead><tbody>`;
+  let h = `<table class="eg${ED.sym ? '' : ' asym'}"><thead><tr><th></th>${cols.map(c=> `<th${dv(c)}>${c[2]}</th>`).join('')}</tr></thead><tbody>`;
   ED.rows.forEach((r, i)=>{
-    h += `<tr><td class="en">${i + 1}</td>${cols.map(c=> `<td${dv(c)}><button class="ec${r[c[0]].includes(c[1]) ? ' x' : ''}" data-c="${i},${c[0]},${c[1]}" aria-label="Fila ${i + 1}, ${c[2]}"></button></td>`).join('')}<td><button class="erm" data-erm="${i}" aria-label="Quitar fila ${i + 1}">×</button></td></tr>`;
+    const p = i % sub, beat = Math.floor(i / sub) % ED.beats + 1, cl = i && i % bar === 0 ? 'ebar' : i && p === 0 ? 'ebt' : '';
+    const lab = p === 0 ? `<b>${beat}</b>` : SYL[p];
+    h += `<tr class="${cl}"><td class="en">${lab}</td>${cols.map(c=> `<td${dv(c)}><button class="ec${r[c[0]].includes(c[1]) ? ' x' : ''}" data-c="${i},${c[0]},${c[1]}" aria-label="Pulso ${beat}${p ? ', ' + (SYL[p] === '·' ? 'paso ' + (p + 1) : SYL[p]) : ''}, ${c[2]}"></button></td>`).join('')}</tr>`;
   });
   $('#egw', edit).innerHTML = h + '</tbody></table>';
 }
@@ -754,7 +774,7 @@ function edObj(){
   const tk = a=> a.length ? a.slice().sort().join('') : '.';
   const L = ED.rows.map(r=> tk(r.L)).join(' '), Rr = ED.sym ? L : ED.rows.map(r=> tk(r.R)).join(' ');
   const lb = $('#e-l .on', edit);
-  return { n: v('#e-n'), d: v('#e-d'), h: v('#e-h'), fam: v('#e-f'), l: lb ? +lb.dataset.elv : 1, bpm0: clamp(Math.round(+v('#e-b') || 60), 20, 300), L, R: Rr };
+  return { n: v('#e-n'), d: v('#e-d'), h: v('#e-h'), fam: v('#e-f'), l: lb ? +lb.dataset.elv : 1, bpm0: clamp(Math.round(+v('#e-b') || 60), 20, 300), L, R: Rr, sub: ED.sub, beats: ED.beats };
 }
 const marked = ()=> ED.rows.some(r=> r.L.length || r.R.length);
 function closeEdit(){ if(!edit.classList.contains('open')) return; edit.classList.remove('open'); edit.innerHTML = ''; ED = null; }
@@ -771,8 +791,18 @@ edit.addEventListener('click', e=>{
     else ED.rows.forEach(r=> r.R = r.L.slice());
     ED.sym = want; drawGrid(); return;
   }
-  if(e.target.closest('[data-eadd]')){ ED.rows.push({ L: [], R: [] }); drawGrid(); return; }
-  const rm = e.target.closest('[data-erm]'); if(rm){ if(ED.rows.length <= 1){ toast('Tiene que haber al menos una fila'); return; } ED.rows.splice(+rm.dataset.erm, 1); drawGrid(); return; }
+  const ad = e.target.closest('[data-eadd]'); if(ad){ const n = ad.dataset.eadd === 'bar' ? ED.sub * ED.beats : ED.sub; for(let k = 0; k < n; k++) ED.rows.push({ L: [], R: [] }); drawGrid(); return; }
+  if(e.target.closest('[data-edel]')){ if(ED.rows.length <= ED.sub){ toast('Tiene que haber al menos un pulso'); return; } const cut = ED.rows.slice(-ED.sub); ED.rows.length -= ED.sub; drawGrid(); if(cut.some(r=> r.L.length || r.R.length)) toast('Quitado el último pulso, con sus marcas'); return; }
+  const bt = e.target.closest('[data-ebt]'); if(bt){ ED.beats = +bt.dataset.ebt; drawGrid(); return; }
+  const sb = e.target.closest('[data-esub]');
+  if(sb){
+    const ns = +sb.dataset.esub, os = ED.sub; if(ns === os) return;
+    const nb = Math.ceil(ED.rows.length / os), rows = Array.from({ length: nb * ns }, ()=> ({ L: [], R: [] }));
+    let moved = false;
+    ED.rows.forEach((r, i)=>{ if(!r.L.length && !r.R.length) return; const t = i * ns / os, j = Math.min(Math.round(t), rows.length - 1); if(Math.abs(t - j) > 1e-9) moved = true; ['L', 'R'].forEach(h=> r[h].forEach(f=>{ if(!rows[j][h].includes(f)) rows[j][h].push(f); })); });
+    ED.sub = ns; ED.rows = rows; drawGrid(); if(moved) toast('Algunas marcas se han movido al paso más cercano');
+    return;
+  }
   if(e.target.closest('[data-eplay]')){ if(!marked()){ toast('Marca alguna casilla'); return; } const o = edObj(); openPlay(Object.assign({ id: '' }, normE(o), { n: o.n || 'Prueba' })); return; }
   const a = e.target.closest('[data-ex]'); if(!a) return;
   const act = a.dataset.ex, id = ED.id;
