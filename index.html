@@ -131,6 +131,8 @@ svg{display:block;}
 .hd .k{transition:fill .08s;}
 .hd .k.nx,.hd .k.sel{fill:rgba(47,140,245,.28);}
 .hd .k.on{fill:#2f8cf5;}
+.hd .k.on.ac{fill:#e5383b;}
+.acc,.card .acc{display:inline;color:#e5383b;font-weight:800;font-size:inherit;}
 .hd .hl{fill:currentColor;opacity:.45;font-size:12px;text-anchor:middle;}
 .hd.tap .k{cursor:pointer;}
 .padinfo{display:flex;flex-direction:column;gap:2px;padding:8px 6px 0;min-height:52px;}
@@ -218,6 +220,7 @@ svg{display:block;}
 .eg.asym .dv{padding-left:5px;}
 .eg.asym th{padding:0 0 4px;font-size:11px;}
 .ec.x{background:#2f8cf5 !important;}
+.ec.x.ac{background:#e5383b !important;}
 .ec.x::after{content:'✕';}
 .erm{width:28px;height:28px;border-radius:8px;opacity:.45;font-size:16px;}
 .erm:hover{opacity:.9;background:var(--h);}
@@ -342,6 +345,16 @@ const DATA = [
   { name:"Ritmo", items:[
     ["Dos contra uno", 2, "una mano toca el doble de rápido que la otra", "la derecha en corcheas, la izquierda en negras", "3 .", "2 3", 60, 2],
     ["Polirritmo 3 contra 2", 4, "tres golpes en una mano contra dos en la otra, en el mismo tiempo", "la derecha marca los pulsos; la izquierda hace un tresillo que ocupa dos pulsos. Empieza a ¼×", "3 . 3 . 3 .", "3 . . 3 . .", 40, 3, 2],
+  ]},
+]},
+{ id:"ritmos", name:"Ritmos", desc:"batería, hip hop, ritmos latinos y flamenco; los acentos van en rojo", color:"#ffb300", subs:[
+  { name:"Rudimentos", items:[
+    ["Paradiddle", 2, "el rudimento de batería más famoso: D I D D · I D I I", "en semicorcheas; acentúa el primer golpe de cada grupo", ". 2 . . 2! . 2 2", "2! . 2 2 . 2 . .", 60, 4, 2],
+  ]},
+  { name:"Estilos", items:[
+    ["Boom bap", 2, "el ritmo clásico del hip hop: bombo, caja y charles", "derecha (índice) el charles en corcheas; izquierda: pulgar el bombo, medio la caja en el 2 y el 4", "1 . 3! . 1 1 3! .", "2 2 2 2 2 2 2 2", 85, 2, 4],
+    ["Clave 3-2", 3, "la clave de son: tres golpes en un compás y dos en el siguiente", "la izquierda marca los pulsos con el pulgar; la derecha toca la clave", "1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .", "2 . . 2 . . 2 . . . 2 . 2 . . .", 80, 2, 4],
+    ["Compás de bulerías", 3, "el compás de 12 del flamenco, con sus acentos en 3, 6, 8, 10 y 12", "la derecha cuenta los 12; el pulgar izquierdo solo en los acentos. En flamenco se suele empezar a contar en el 12", ". . 1 . . 1 . 1 . 1 . 1", "2 2 2! 2 2 2! 2 2! 2 2! 2 2!", 100, 1, 12],
   ]},
 ]},
 { id:"velocidad", name:"Velocidad", desc:"golpes cortos y rápidos, con descanso para soltar la tensión", color:"#e91e63", subs:[
@@ -480,16 +493,20 @@ window.ddToast = toast;
 
 /* --- patrones --- */
 function parse(p){
-  const t = String(p || '').trim().split(/\s+/).filter(Boolean).map(x=> x === '.' || x === '-' ? [] : [...x].map(Number).filter(n=> n >= 1 && n <= 5));
+  const t = String(p || '').trim().split(/\s+/).filter(Boolean).map(x=>{
+    const o = [];
+    for(const ch of x){ if(ch >= '1' && ch <= '5'){ const n = +ch; if(!o.some(v=> v % 10 === n)) o.push(n); } else if(ch === '!' && o.length && o[o.length - 1] < 10) o[o.length - 1] += 10; }
+    return o;
+  });
   return t.length ? t : [[]];
 }
 const FN = ['', 'pulgar', 'índice', 'medio', 'anular', 'meñique'];
-const fnames = a=> a.length ? a.map(i=> FN[i]).join(' + ') : 'descanso';
+const fnames = a=> a.length ? a.map(v=> v > 10 ? `<b class="acc">${FN[v - 10]}</b>` : FN[v]).join(' + ') : 'descanso';
 function steps(x){
   const P = { L: parse(x.L), R: parse(x.R) }, a = P.L.length, b = P.R.length, n = a === b ? a : Math.min(a * b / gcd(a, b), 64);
   return Array.from({ length: n }, (_, i)=> ({ L: P.L[i % a], R: P.R[i % b] }));
 }
-const tok = (a, sg)=> a.length ? a.map(i=> sg + i).join('') : '·';
+const tok = (a, sg)=> a.length ? a.map(v=> v > 10 ? `<b class="acc">${sg}${v - 10}</b>` : sg + v).join('') : '·';
 const isSym = x=> x.L.trim() === x.R.trim();
 function notation(x){
   const t = isSym(x) ? parse(x.L).map(a=> tok(a, '')) : steps(x).map(st=> st.L.length || st.R.length ? (st.L.length ? tok(st.L, '−') : '') + (st.R.length ? tok(st.R, '+') : '') : '·');
@@ -513,7 +530,7 @@ const HANDS = `<svg class="hd" viewBox="0 0 440 252" role="img" aria-label="Mano
 const NONE = { L: [], R: [] };
 function paint(svg, on, nx){
   on = on || NONE; nx = nx || NONE;
-  svg.querySelectorAll('.k').forEach(k=>{ const h = k.dataset.f[0], i = +k.dataset.f[1], o = on[h].includes(i); k.classList.toggle('on', o); k.classList.toggle('nx', !o && nx[h].includes(i)); });
+  svg.querySelectorAll('.k').forEach(k=>{ const h = k.dataset.f[0], i = +k.dataset.f[1], a = on[h].includes(i + 10), o = a || on[h].includes(i); k.classList.toggle('on', o); k.classList.toggle('ac', a); k.classList.toggle('nx', !o && nx[h].includes(i)); });
 }
 
 /* --- navegación --- */
@@ -582,9 +599,9 @@ function chipsHTML(){
 function card(x, showFam, ri){
   const d = isDone(x.id), inR = ri != null;
   let sb = `<span class="sb">${esc(NLAB[x.l] + (showFam ? ' · ' + x.f.name : '') + ' · ' + bpmOf(x) + ' bpm' + ((x.sub || 1) > 1 ? ' · ' + SUBS[x.sub] : ''))}</span>`;
-  const line = (tags, txt)=> `<span class="sb2"><i>${tags}</i><span>${esc(txt)}</span></span>`;
+  const line = (tags, txt, html)=> `<span class="sb2"><i>${tags}</i><span>${html ? txt : esc(txt)}</span></span>`;
   sb += line('<b class="am">Cómo</b>', x.h);
-  sb += line(isSym(x) ? '<b class="iz">SIM</b>' : '<b class="de">ASIM</b>', notation(x));
+  sb += line(isSym(x) ? '<b class="iz">SIM</b>' : '<b class="de">ASIM</b>', notation(x), true);
   const nb = 4 + (inR && ri > 0 ? 1 : 0);
   const acts = `<button class="pl" data-play="1" title="Ver en las manos" aria-label="Ver en las manos">▶</button><button data-edit="1" title="Editar" aria-label="Editar">✎</button><button class="${d ? 'on' : ''}" data-ck="1" title="Marcar automatizado" aria-label="Marcar automatizado">✓</button>` + (inR ? `<button data-rm="${ri}" title="Quitar de la rutina" aria-label="Quitar de la rutina">×</button>${ri > 0 ? `<button data-up="${ri}" title="Subir" aria-label="Subir">↑</button>` : ''}` : `<button data-add="1" title="Añadir a una rutina" aria-label="Añadir a una rutina">+</button>`);
   return `<div class="card${d ? ' done' : ''}" data-name="${esc(x.id)}" style="background:${NFILL[x.l] || '#e5e5ea'};min-height:${nb * 34 + 14}px"><b>${esc(x.n)}</b><span class="an">${esc(x.d)}</span>${sb}<span class="acts">${acts}</span></div>`;
@@ -606,7 +623,7 @@ function openPlay(a){
 function plShow(i){
   pl.i = i; const st = pl.steps[i];
   paint(pl.svg, st);
-  const c = capOf(st); $('.plcap', play).textContent = c[0]; $('.plkeys', play).textContent = c[1] || ' ';
+  const c = capOf(st); $('.plcap', play).innerHTML = c[0]; $('.plkeys', play).innerHTML = c[1] || ' ';
   play.querySelectorAll('.pldots i').forEach((d, k)=> d.classList.toggle('on', k === i));
 }
 function plNext(){ if(!pl) return; clearTimeout(pl.t); plShow((pl.i + 1) % pl.steps.length); if(pl.run) pl.t = setTimeout(plNext, pl.ms / pl.spd); }
@@ -666,9 +683,9 @@ function sesHTML(){
 }
 function startEx(){
   const sb = $('#sbody', ses); sb.innerHTML = sesHTML();
-  S.svg = $('svg', sb); S.st = steps(S.items[S.i].x); S.ci = S.items[S.i].x.beats || 4;
+  S.svg = $('svg', sb); S.st = steps(S.items[S.i].x); S.ci = Math.min(S.items[S.i].x.beats || 4, 4);
   S.phase = 'prep'; S.left = S.items[S.i].secs; S.running = true; kb = 0; vq = []; nextT = now() + .2;
-  paint(S.svg); const c = capOf(S.st[0]); $('.plcap', sb).textContent = 'empieza: ' + c[0]; $('.plkeys', sb).textContent = c[1] || ' ';
+  paint(S.svg); const c = capOf(S.st[0]); $('.plcap', sb).innerHTML = 'empieza: ' + c[0]; $('.plkeys', sb).innerHTML = c[1] || ' ';
 }
 setInterval(()=>{
   if(!S || !S.running || S.phase === 'rate' || S.phase === 'done') return;
@@ -687,7 +704,7 @@ function frame(ts){
   while(vq.length && vq[0].t <= n){
     const v = vq.shift();
     if(v.k < S.ci){ S.phase = 'prep'; tm.textContent = S.ci - v.k; tm.classList.add('prep'); }
-    else{ if(S.phase !== 'run'){ S.phase = 'run'; tm.classList.remove('prep'); } const b = v.k - S.ci, st = S.st[b % S.st.length]; paint(S.svg, st); const c = capOf(st); $('.plcap', sb).textContent = c[0]; $('.plkeys', sb).textContent = c[1] || ' '; }
+    else{ if(S.phase !== 'run'){ S.phase = 'run'; tm.classList.remove('prep'); } const b = v.k - S.ci, st = S.st[b % S.st.length]; paint(S.svg, st); const c = capOf(st); $('.plcap', sb).innerHTML = c[0]; $('.plkeys', sb).innerHTML = c[1] || ' '; }
   }
   if(S.phase === 'run'){ S.left -= dt; if(S.left <= 0){ toRate(); return; } const s = Math.ceil(S.left); tm.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
 }
@@ -744,12 +761,12 @@ function openEdit(id, fam){
     <div class="ef2"><label class="ef">Familia<select id="e-f">${DATA.map(f=> `<option value="${f.id}"${f.id === f0 ? ' selected' : ''}>${esc(f.name)}</option>`).join('')}</select></label>
     <label class="ef">Tempo (bpm de la negra)<input id="e-b" type="number" inputmode="numeric" min="20" max="300" value="${x ? x.bpm0 : 60}"></label></div>
     <div class="ef">Nivel<div class="chips" id="e-l">${[1, 2, 3, 4].map(k=> `<button class="chip${k === lv ? ' on' : ''}" data-elv="${k}" style="${k === lv ? '' : 'box-shadow:inset 0 -3px 0 ' + NFILL[k]}">${NLAB[k]}</button>`).join('')}</div></div>
-    <div class="ef">Compás<div class="chips" id="e-bt">${[2, 3, 4, 5, 6, 7].map(k=> `<button class="chip" data-ebt="${k}">${k}/4</button>`).join('')}</div></div>
+    <div class="ef">Compás · pulsos por compás<div class="chips" id="e-bt">${[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(k=> `<button class="chip" data-ebt="${k}" style="min-width:40px">${k}</button>`).join('')}</div></div>
     <div class="ef">Subdivisión · cuántas filas tiene cada pulso<div class="chips" id="e-sub">${Object.entries(SUBS).map(([k, n])=> `<button class="chip" data-esub="${k}">${n}${k > 1 ? ' · ' + k : ''}</button>`).join('')}</div></div>
     <div class="ef">Manos<div class="chips"><button class="chip" data-esym="1">Simétrico</button><button class="chip" data-esym="0">No simétrico</button></div></div>
     <div class="egw" id="egw"></div>
     <div class="chips" style="padding-top:8px;justify-content:center"><button class="chip" data-eadd="1">+ pulso</button><button class="chip" data-eadd="bar">+ compás</button><button class="chip" data-edel="1">− pulso</button><button class="chip go" data-eplay="1">▶ Probar</button></div>
-    <div class="ehint">Cada fila es un paso; los números son los pulsos (1 2 3 4) y en medio se cuentan las subdivisiones (1 y · 1 e y a · 1 y a en tresillos). La línea fina separa pulsos y la gruesa, compases. Una fila vacía es un silencio. Dedos del 1 (pulgar) al 5 (meñique): izquierda en negativo, de −5 a −1, y derecha en positivo, de +1 a +5, como las manos sobre la mesa.</div>
+    <div class="ehint">Cada fila es un paso; los números son los pulsos (1 2 3 4) y en medio se cuentan las subdivisiones (1 y · 1 e y a · 1 y a en tresillos). La línea fina separa pulsos y la gruesa, compases. Una fila vacía es un silencio. Toca una casilla una vez para marcarla (azul) y otra vez para que sea un acento, un golpe más fuerte (rojo); la tercera la vacía. Dedos del 1 (pulgar) al 5 (meñique): izquierda en negativo, de −5 a −1, y derecha en positivo, de +1 a +5, como las manos sobre la mesa.</div>
     ${x ? `<div class="chips" style="padding-top:14px">${x.edited && !x.own ? '<button class="chip" data-ex="orig">↺ Volver al original</button>' : ''}<button class="chip" data-ex="del" style="color:#d32f2f">Eliminar ejercicio</button></div>` : ''}
   </div></div>`;
   edit.classList.add('open'); drawGrid();
@@ -765,29 +782,36 @@ function drawGrid(){
   ED.rows.forEach((r, i)=>{
     const p = i % sub, beat = Math.floor(i / sub) % ED.beats + 1, cl = i && i % bar === 0 ? 'ebar' : i && p === 0 ? 'ebt' : '';
     const lab = p === 0 ? `<b>${beat}</b>` : SYL[p];
-    h += `<tr class="${cl}"><td class="en">${lab}</td>${cols.map(c=> `<td${dv(c)}><button class="ec${r[c[0]].includes(c[1]) ? ' x' : ''}" data-c="${i},${c[0]},${c[1]}" aria-label="Pulso ${beat}${p ? ', ' + (SYL[p] === '·' ? 'paso ' + (p + 1) : SYL[p]) : ''}, ${c[2]}"></button></td>`).join('')}</tr>`;
+    h += `<tr class="${cl}"><td class="en">${lab}</td>${cols.map(c=> `<td${dv(c)}><button class="ec${r[c[0]].includes(c[1] + 10) ? ' x ac' : r[c[0]].includes(c[1]) ? ' x' : ''}" data-c="${i},${c[0]},${c[1]}" aria-label="Pulso ${beat}${p ? ', ' + (SYL[p] === '·' ? 'paso ' + (p + 1) : SYL[p]) : ''}, ${c[2]}"></button></td>`).join('')}</tr>`;
   });
   $('#egw', edit).innerHTML = h + '</tbody></table>';
 }
 function edObj(){
   const v = id=> $(id, edit).value.trim();
-  const tk = a=> a.length ? a.slice().sort().join('') : '.';
+  const tk = a=> a.length ? a.slice().sort((p, q)=> p % 10 - q % 10).map(v=> v > 10 ? (v - 10) + '!' : String(v)).join('') : '.';
   const L = ED.rows.map(r=> tk(r.L)).join(' '), Rr = ED.sym ? L : ED.rows.map(r=> tk(r.R)).join(' ');
   const lb = $('#e-l .on', edit);
   return { n: v('#e-n'), d: v('#e-d'), h: v('#e-h'), fam: v('#e-f'), l: lb ? +lb.dataset.elv : 1, bpm0: clamp(Math.round(+v('#e-b') || 60), 20, 300), L, R: Rr, sub: ED.sub, beats: ED.beats };
 }
+/* junta un dedo en una casilla; si ya estaba, gana el acento */
+function addF(arr, v){ const k = arr.findIndex(q=> q % 10 === v % 10); if(k < 0) arr.push(v); else if(v > 10) arr[k] = v; }
 const marked = ()=> ED.rows.some(r=> r.L.length || r.R.length);
 function closeEdit(){ if(!edit.classList.contains('open')) return; edit.classList.remove('open'); edit.innerHTML = ''; ED = null; }
 edit.addEventListener('click', e=>{
   if(!ED) return;
   if(e.target === edit){ closeEdit(); return; }
   const c = e.target.closest('[data-c]');
-  if(c){ const [i, h, f] = c.dataset.c.split(','), r = ED.rows[+i], arr = r[h], k = arr.indexOf(+f); if(k >= 0) arr.splice(k, 1); else arr.push(+f); if(ED.sym) r.R = r.L.slice(); c.classList.toggle('x', k < 0); return; }
+  if(c){
+    const [i, h, fs] = c.dataset.c.split(','), f = +fs, r = ED.rows[+i], arr = r[h], st = arr.includes(f + 10) ? 2 : arr.includes(f) ? 1 : 0;
+    r[h] = arr.filter(v=> v % 10 !== f); if(st === 0) r[h].push(f); else if(st === 1) r[h].push(f + 10);
+    if(ED.sym) r.R = r.L.slice();
+    c.classList.toggle('x', st < 2); c.classList.toggle('ac', st === 1); return;
+  }
   const lv = e.target.closest('[data-elv]'); if(lv){ edit.querySelectorAll('[data-elv]').forEach(b=>{ const on = b === lv; b.classList.toggle('on', on); b.style.boxShadow = on ? '' : 'inset 0 -3px 0 ' + NFILL[b.dataset.elv]; }); return; }
   const sy = e.target.closest('[data-esym]');
   if(sy){
     const want = sy.dataset.esym === '1'; if(want === ED.sym) return;
-    if(want){ const lost = ED.rows.some(r=> r.L.slice().sort().join() !== r.R.slice().sort().join()); ED.rows.forEach(r=>{ const u = [...new Set(r.L.concat(r.R))]; r.L = u; r.R = u.slice(); }); if(lost) toast('Las filas con manos distintas se han juntado'); }
+    if(want){ const lost = ED.rows.some(r=> r.L.slice().sort().join() !== r.R.slice().sort().join()); ED.rows.forEach(r=>{ const u = []; r.L.concat(r.R).forEach(v=> addF(u, v)); r.L = u; r.R = u.slice(); }); if(lost) toast('Las filas con manos distintas se han juntado'); }
     else ED.rows.forEach(r=> r.R = r.L.slice());
     ED.sym = want; drawGrid(); return;
   }
@@ -799,7 +823,7 @@ edit.addEventListener('click', e=>{
     const ns = +sb.dataset.esub, os = ED.sub; if(ns === os) return;
     const nb = Math.ceil(ED.rows.length / os), rows = Array.from({ length: nb * ns }, ()=> ({ L: [], R: [] }));
     let moved = false;
-    ED.rows.forEach((r, i)=>{ if(!r.L.length && !r.R.length) return; const t = i * ns / os, j = Math.min(Math.round(t), rows.length - 1); if(Math.abs(t - j) > 1e-9) moved = true; ['L', 'R'].forEach(h=> r[h].forEach(f=>{ if(!rows[j][h].includes(f)) rows[j][h].push(f); })); });
+    ED.rows.forEach((r, i)=>{ if(!r.L.length && !r.R.length) return; const t = i * ns / os, j = Math.min(Math.round(t), rows.length - 1); if(Math.abs(t - j) > 1e-9) moved = true; ['L', 'R'].forEach(h=> r[h].forEach(v=> addF(rows[j][h], v))); });
     ED.sub = ns; ED.rows = rows; drawGrid(); if(moved) toast('Algunas marcas se han movido al paso más cercano');
     return;
   }
