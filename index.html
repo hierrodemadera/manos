@@ -141,7 +141,7 @@ svg{display:block;}
 /* reproductor y sesión */
 #play,#ses{position:fixed;inset:0;z-index:910;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.35);}
 #play.open,#ses.open{display:flex;}
-#play .pk,#ses .pk{background:var(--solid);width:100%;max-width:560px;max-height:92vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:auto;box-shadow:0 8px 30px rgba(0,0,0,.3);padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));}
+#play .pk,#ses .pk{background:var(--solid);width:100%;max-width:560px;max-height:92vh;max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px));border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:auto;box-shadow:0 8px 30px rgba(0,0,0,.3);padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));}
 @media (min-width:600px){#play,#ses{align-items:center;}#play .pk,#ses .pk{border-radius:18px;}}
 #play .padwrap,#ses .padwrap{padding:0 14px;}
 .plcap{text-align:center;font-size:17px;font-weight:600;min-height:30px;padding:8px 16px 0;}
@@ -171,10 +171,11 @@ svg{display:block;}
 /* elegir ejercicios */
 #pick{position:fixed;inset:0;z-index:900;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.35);}
 #pick.open{display:flex;}
-#pick .pk{background:var(--solid);width:100%;max-width:520px;max-height:86vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.3);}
+#pick .pk{background:var(--solid);width:100%;max-width:520px;max-height:86vh;max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px));border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.3);}
 @media (min-width:600px){#pick{align-items:center;}#pick .pk{border-radius:18px;}}
 .pkh{display:flex;align-items:center;gap:8px;padding:14px 14px 8px;font-weight:700;}
 .pkh span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+#play .pkh,#ses .pkh,#pick .pkh{position:sticky;top:0;background:var(--solid);z-index:1;}
 .pkh button{padding:8px 16px !important;border-radius:10px;background:var(--sel) !important;color:#fff !important;font-weight:600;}
 .pks{padding:0 14px 6px;}
 .pks input{width:100%;height:38px;border-radius:10px;border:1px solid var(--b) !important;padding:0 10px !important;font-size:16px;outline:none;cursor:text !important;-webkit-user-select:text;user-select:text;}
@@ -192,9 +193,9 @@ svg{display:block;}
 @media (max-width:560px){.grid{grid-template-columns:1fr;}.fh{font-size:22px;}.row .rs{max-width:38vw;overflow:hidden;text-overflow:ellipsis;}}
 
 /* metrónomo: ventana y barra de abajo */
-#met{position:fixed;inset:0;z-index:920;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.35);}
+#met{position:fixed;inset:0;z-index:920;padding-top:calc(8px + env(safe-area-inset-top,0px));display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.35);}
 #met.open{display:flex;}
-#met .pk{background:var(--solid);width:100%;max-width:560px;max-height:96vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:auto;box-shadow:0 8px 30px rgba(0,0,0,.3);}
+#met .pk{background:var(--solid);width:100%;max-width:560px;max-height:92vh;max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px));border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:auto;box-shadow:0 8px 30px rgba(0,0,0,.3);}
 @media (min-width:600px){#met{align-items:center;}#met .pk{border-radius:18px;}}
 #met .pkh{position:sticky;top:0;background:var(--solid);z-index:1;}
 .mb{padding:0 14px calc(18px + env(safe-area-inset-bottom,0px));}
@@ -242,7 +243,7 @@ body.hasbar .toast{bottom:calc(70px + env(safe-area-inset-bottom,0px));}
 /* editor de ejercicios: la tabla */
 #edit{position:fixed;inset:0;z-index:905;display:none;align-items:flex-end;justify-content:center;background:rgba(0,0,0,.35);}
 #edit.open{display:flex;}
-#edit .pk{background:var(--solid);width:100%;max-width:560px;max-height:92vh;border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:auto;box-shadow:0 8px 30px rgba(0,0,0,.3);}
+#edit .pk{background:var(--solid);width:100%;max-width:560px;max-height:92vh;max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px));border-radius:18px 18px 0 0;display:flex;flex-direction:column;overflow:auto;box-shadow:0 8px 30px rgba(0,0,0,.3);}
 @media (min-width:600px){#edit{align-items:center;}#edit .pk{border-radius:18px;}}
 #edit .pkh{position:sticky;top:0;background:var(--solid);z-index:1;}
 .edb{padding:0 14px calc(16px + env(safe-area-inset-bottom,0px));}
@@ -312,7 +313,7 @@ body.hasbar .toast{bottom:calc(70px + env(safe-area-inset-bottom,0px));}
 @media (prefers-reduced-motion:reduce){#ml-cloud.s-sync{animation:none;}.in{animation:none;}}
 #ml-gh{position:fixed;inset:0;z-index:950;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(0,0,0,.35);}
 #ml-gh.open{display:flex;}
-#ml-gh .g{background:var(--panel);color:inherit;border-radius:18px;width:100%;max-width:440px;max-height:92vh;overflow:auto;padding:18px;font-size:14px;line-height:1.45;box-shadow:0 8px 30px rgba(0,0,0,.35);-webkit-user-select:text;user-select:text;}
+#ml-gh .g{background:var(--panel);color:inherit;border-radius:18px;width:100%;max-width:440px;max-height:92vh;max-height:calc(100dvh - 16px - env(safe-area-inset-top,0px));overflow:auto;padding:18px;font-size:14px;line-height:1.45;box-shadow:0 8px 30px rgba(0,0,0,.35);-webkit-user-select:text;user-select:text;}
 :root.dark #ml-gh .g{background:#2c2c2e;}
 #ml-gh h3{font-size:17px;margin:0 0 6px;}
 #ml-gh .st{margin:6px 0 10px;opacity:.6;}
@@ -698,7 +699,18 @@ play.addEventListener('click', e=>{
 /* --- sesión: recorre una rutina con metrónomo, temporizador y las manos --- */
 const ses = $('#ses'); let S = null;
 let ac = null, muted = false, nextT = 0, kb = 0, vq = [], last = 0, lock = null;
-function audio(){ if(!ac){ try{ ac = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ ac = null; } } if(ac && ac.state === 'suspended') ac.resume().catch(()=>{}); }
+/* En iPhone, el interruptor de silencio apaga el sonido web. Un audio silencioso en bucle pone la página en modo «reproducción»
+   (como una app de música) y así el clic suena aunque el móvil esté en silencio. */
+let silEl = null;
+function audio(){
+  try{ if(navigator.audioSession) navigator.audioSession.type = 'playback'; }catch(e){}
+  if(!ac){ try{ ac = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){ ac = null; } }
+  if(ac && ac.state !== 'running') ac.resume().catch(()=>{});
+  if(ac && !ac._ok){ try{ const b = ac.createBuffer(1, 1, 22050), src = ac.createBufferSource(); src.buffer = b; src.connect(ac.destination); src.start(0); ac._ok = 1; }catch(e){} }
+  try{ if(!silEl){ silEl = new Audio('data:audio/wav;base64,UklGRsQPAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YaAPAACAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA'); silEl.loop = true; silEl.setAttribute('playsinline', ''); silEl.volume = 0.01; } const p = silEl.play(); if(p && p.catch) p.catch(()=>{}); }catch(e){}
+}
+function audioIdle(){ try{ if(silEl && !(S && S.phase !== 'done') && !(typeof MT !== 'undefined' && MT.run)) silEl.pause(); }catch(e){} }
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible' && ac && ac.state !== 'running' && ((S && S.running) || (typeof MT !== 'undefined' && MT.run))) ac.resume().catch(()=>{}); });
 const now = ()=> ac ? ac.currentTime : performance.now() / 1000;
 function click(t, acc){
   if(!ac || muted) return;
@@ -776,7 +788,7 @@ function sesFinish(){
   if(n){ logs[Date.now().toString(36)] = { d: dkey(new Date()), r: S.name, n, m: min }; saveLog(); }
   $('#sbody', ses).innerHTML = `<div class="sdone"><div class="ssec">hecho</div><div class="big">${min} min</div><div class="sdesc">${n ? n + (n === 1 ? ' ejercicio' : ' ejercicios') + ' · los tempos ya están ajustados para la próxima' : 'No se ha guardado nada'}</div><div class="chips" style="justify-content:center;padding-top:8px"><button class="chip go" data-sx="1">Cerrar</button></div></div>`;
 }
-function closeSes(){ S = null; vq = []; wake(false); ses.classList.remove('open'); ses.innerHTML = ''; rerender(); }
+function closeSes(){ S = null; vq = []; wake(false); audioIdle(); ses.classList.remove('open'); ses.innerHTML = ''; rerender(); }
 ses.addEventListener('click', e=>{
   if(!S) return;
   if(e.target.closest('[data-sx]')){ if(S.phase === 'done' || !Object.keys(S.done).length) closeSes(); else sesFinish(); return; }
@@ -960,7 +972,7 @@ function mStart(){
   if(S){ toast('Termina la sesión para usar este metrónomo'); return; }
   audio(); MT.run = true; MT.tick = 0; MT.q = []; MT.next = now() + .12; MT.t0 = Date.now(); wake(true); mRenderLive();
 }
-function mStop(){ MT.run = false; MT.q = []; MT.linked = false; if(!S) wake(false); document.querySelectorAll('#met .mdot,#mbar .mds i').forEach(d=> d.classList.remove('on', 'mu')); const pk = play.querySelector('.plink'); if(pk) pk.classList.remove('on'); mRenderLive(); }
+function mStop(){ MT.run = false; MT.q = []; MT.linked = false; if(!S) wake(false); audioIdle(); document.querySelectorAll('#met .mdot,#mbar .mds i').forEach(d=> d.classList.remove('on', 'mu')); const pk = play.querySelector('.plink'); if(pk) pk.classList.remove('on'); mRenderLive(); }
 function mRestart(){ if(MT.run){ MT.tick = 0; MT.q = []; MT.next = now() + .08; } }
 function linkPlayer(){
   const x = pl.x; M.bpm = clamp(Math.round(bpmOf(x) * pl.spd), 20, 300); M.beats = x.beats || 4; M.sub = x.sub || 1; M.swing = false; M.gap.on = false; M.trn.on = false; mFix(); mSave();
@@ -1005,6 +1017,7 @@ function mRender(){
     <div class="ef">Temporizador · se para solo${M.tmin && MT.run ? ' · quedan <span id="m-left"></span>' : ''}<div class="chips">${[0, 2, 5, 10, 15, 20, 30].map(k=> ch('data-mtim', k, M.tmin === k, k ? k + ' min' : 'sin límite')).join('')}</div></div>
     <div class="ef">Ajustes guardados<div class="chips">${pre.length ? pre.map(([id, p])=> `<span class="mpre"><button class="chip" data-mpre="${id}">${esc(p.n)} · ${p.s.bpm}</button><button class="chip mpx" data-mpdel="${id}" aria-label="Borrar ${esc(p.n)}">×</button></span>`).join('') : '<span style="opacity:.5;font-weight:400">Nada guardado todavía.</span>'}</div>
       <div class="mrow"><input type="text" id="m-pn" placeholder="nombre, p. ej. Bulerías lento" autocomplete="off"><button class="chip go" data-m="psave">Guardar</button></div></div>
+    <div class="chips" style="justify-content:center;padding-top:18px"><button class="chip go" data-m="close" style="padding:10px 22px !important">Cerrar y dejar la barra abajo</button></div>
   </div></div>`;
   met.querySelector('.pk').scrollTop = y;
 }
