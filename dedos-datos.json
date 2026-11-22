@@ -1,0 +1,112 @@
+{
+ "format": "dedos-datos",
+ "version": 1,
+ "updated": "2026-11-22T19:37:53.727Z",
+ "checks": {},
+ "routines": {
+  "d1": {
+   "name": "Diaria",
+   "color": "#2979ff",
+   "items": [
+    {
+     "h": 1,
+     "t": "Calentamiento · 3 min"
+    },
+    "Ola",
+    "Oposición del pulgar",
+    "Trino índice-medio",
+    {
+     "h": 1,
+     "t": "Difícil en aprendizaje · 5 min"
+    },
+    {
+     "h": 2,
+     "t": "Solo uno",
+     "d": "Lento y sin fallos hasta que salga sin pensar."
+    },
+    "Levantar uno a uno",
+    {
+     "h": 1,
+     "t": "Mantenimiento · 2 min"
+    },
+    {
+     "h": 2,
+     "t": "Los ya automatizados",
+     "d": "Aquí van los difíciles que ya tienen ✓. Sube el tempo cuando salgan limpios."
+    }
+   ],
+   "note": "Unos 10 min. Cuando automatices el difícil: ✓, súbelo a Mantenimiento con ↑ y trae el siguiente de «Cola de difíciles».",
+   "o": 0
+  },
+  "d2": {
+   "name": "Cola de difíciles",
+   "color": "#aa00ff",
+   "items": [
+    "Patrones salteados",
+    "Patrón distinto",
+    "Anular aislado",
+    "Polirritmo 3 contra 2"
+   ],
+   "note": "Lista de espera, en orden. No hace falta entrenarla: de aquí sale el siguiente difícil.",
+   "o": 1
+  },
+  "d3": {
+   "name": "Velocidad",
+   "color": "#e91e63",
+   "items": [
+    {
+     "h": 1,
+     "t": "Trinos · 2 min"
+    },
+    "Trino medio-anular",
+    "Trino anular-meñique",
+    {
+     "h": 1,
+     "t": "Ráfagas · 3 min"
+    },
+    "Ráfaga de trino",
+    "Doble toque",
+    "Pulgar a dos puntos"
+   ],
+   "note": "Unos 5 min. Para los días con más ganas o antes de jugar.",
+   "o": 2
+  },
+  "d4": {
+   "name": "Mando",
+   "color": "#607d8b",
+   "items": [
+    {
+     "h": 1,
+     "t": "Puños cerrados · 3 min"
+    },
+    "Pulgar arriba y abajo",
+    "Pulgar a los lados",
+    "Pulgar adelante y atrás",
+    {
+     "h": 1,
+     "t": "Dedos recogidos · 2 min"
+    },
+    "Escalera por las uñas",
+    "Escalera por las falanges",
+    {
+     "h": 1,
+     "t": "Extensiones · 1 min"
+    },
+    "Índice y medio extendidos",
+    {
+     "h": 1,
+     "t": "Garra y paz · 3 min"
+    },
+    "Garra contra el pulgar",
+    "Plegar a la base del pulgar · a la vez",
+    "Plegar a la base del pulgar · alternando"
+   ],
+   "note": "Resistencia y velocidad para la mano del mando. Para los días que toque mando.",
+   "o": 3
+  }
+ },
+ "tempos": {},
+ "logs": {},
+ "ejs": {},
+ "metPresets": {}
+}
