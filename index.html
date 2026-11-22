@@ -408,6 +408,25 @@ const DATA = [
     ["Compás de bulerías", 3, "el compás de 12 del flamenco, con sus acentos en 3, 6, 8, 10 y 12", "la derecha cuenta los 12; el pulgar izquierdo solo en los acentos. En flamenco se suele empezar a contar en el 12", ". . 1 . . 1 . 1 . 1 . 1", "2 2 2! 2 2 2! 2 2! 2 2! 2 2!", 100, 1, 12],
   ]},
 ]},
+{ id:"mando", name:"Entrenamiento mando", desc:"resistencia y velocidad pensando en la mano con el mando; se hacen sin mando", color:"#607d8b", nohands:true, subs:[
+  { name:"Puños cerrados", items:[
+    ["Pulgar arriba y abajo", 1, "con el puño cerrado, sube y baja el pulgar pulsando el índice", "el índice se queda cerrado; el pulgar pulsa y vuelve", ".", ".", 80],
+    ["Pulgar a los lados", 1, "con el puño cerrado, desplaza el pulgar de lado a lado", "ir y volver", ".", ".", 80],
+    ["Pulgar adelante y atrás", 1, "con el puño cerrado, desplaza el pulgar hacia delante y hacia atrás", "ir y volver", ".", ".", 80],
+  ]},
+  { name:"Dedos recogidos", items:[
+    ["Escalera por las uñas", 2, "el pulgar toca en escalera de la uña del índice a la del meñique y vuelve tocando las falanges más cercanas a las uñas", "dedos recogidos menos el pulgar: el puño no llega a cerrarse, las yemas tocan la almohadilla de la palma donde empieza su dedo", ".", ".", 70],
+    ["Escalera por las falanges", 2, "la misma lógica, pero el pulgar toca la otra falange y luego la de abajo (la del ejercicio anterior), en escalera", "misma postura que la escalera por las uñas", ".", ".", 70],
+  ]},
+  { name:"Extensiones", items:[
+    ["Índice y medio extendidos", 1, "desde el puño cerrado, extiende el índice dos veces en todo su recorrido y ciérralo; luego dos veces el medio", "repetir varias veces; recorrido máximo", ".", ".", 70],
+  ]},
+  { name:"Garra y paz", items:[
+    ["Garra contra el pulgar", 2, "tocar lo más rápido posible la falange del pulgar, alternando índice y medio", "postura: mano en símbolo de paz y luego garra con el índice y el medio", ".", ".", 100],
+    ["Plegar a la base del pulgar · a la vez", 1, "con los dedos extendidos (símbolo de paz), pliega índice y medio a la vez hasta tocar el metacarpiano del pulgar", "sin hacer garra: aquí las yemas no tocan el pulgar", ".", ".", 90],
+    ["Plegar a la base del pulgar · alternando", 2, "lo mismo, pero alternando índice y medio", "sin hacer garra: aquí las yemas no tocan el pulgar", ".", ".", 90],
+  ]},
+]},
 { id:"velocidad", name:"Velocidad", desc:"golpes cortos y rápidos, con descanso para soltar la tensión", color:"#e91e63", subs:[
   { name:"Ráfagas", items:[
     ["Ráfaga de trino", 2, "cuatro golpes rápidos y descanso", "rápido pero suelto; el descanso es para relajar", "2 3 2 3 . . . .", "2 3 2 3 . . . .", 60, 4, 2],
@@ -445,6 +464,16 @@ const TRAINING = [
 // En "items": un texto es un ejercicio; {h:1,t} es un título; {h:2,t,d} es un subtítulo con su explicación.
 // Si un título lleva minutos ("· 5 min"), ese tiempo se reparte entre sus ejercicios al empezar.
 const H1 = t=> ({ h: 1, t }), H2 = (t, d)=> ({ h: 2, t, d });
+const MANDO_ITEMS = [
+  H1("Puños cerrados · 3 min"),
+  "Pulgar arriba y abajo","Pulgar a los lados","Pulgar adelante y atrás",
+  H1("Dedos recogidos · 2 min"),
+  "Escalera por las uñas","Escalera por las falanges",
+  H1("Extensiones · 1 min"),
+  "Índice y medio extendidos",
+  H1("Garra y paz · 3 min"),
+  "Garra contra el pulgar","Plegar a la base del pulgar · a la vez","Plegar a la base del pulgar · alternando",
+];
 const ROUTINES_SEED = {
   d1: { name: "Diaria", color: "#2979ff", note: "Unos 10 min. Cuando automatices el difícil: ✓, súbelo a Mantenimiento con ↑ y trae el siguiente de «Cola de difíciles».", o: 0, items: [
     H1("Calentamiento · 3 min"),
@@ -458,6 +487,7 @@ const ROUTINES_SEED = {
   d2: { name: "Cola de difíciles", color: "#aa00ff", note: "Lista de espera, en orden. No hace falta entrenarla: de aquí sale el siguiente difícil.", o: 1, items: [
     "Patrones salteados","Patrón distinto","Anular aislado","Polirritmo 3 contra 2",
   ]},
+  d4: { name: "Mando", color: "#607d8b", note: "Resistencia y velocidad para la mano del mando. Para los días que toque mando.", o: 3, items: MANDO_ITEMS },
   d3: { name: "Velocidad", color: "#e91e63", note: "Unos 5 min. Para los días con más ganas o antes de jugar.", o: 2, items: [
     H1("Trinos · 2 min"),
     "Trino medio-anular","Trino anular-meñique",
@@ -504,8 +534,11 @@ const RK = 'dd_routines', CK = 'dd_checks', TK = 'dd_tempo', GK = 'dd_log';
 const normItem = x=> typeof x === 'string' ? x : x && x.h === 1 ? { h: 1, t: String(x.t || '') } : x && x.h === 2 ? { h: 2, t: String(x.t || ''), d: String(x.d || '') } : null;
 const normR = r=> ({ name: String(r && r.name || ''), color: String(r && r.color || '#bdbdbd'), items: Array.isArray(r && r.items) ? r.items.map(normItem).filter(x=> x !== null) : [], note: String(r && r.note || ''), o: +(r && r.o) || 0 });
 let routines = load(RK, null);
-if(!routines){ routines = {}; Object.entries(ROUTINES_SEED).forEach(([id, r])=> routines[id] = normR(r)); put(RK, routines); }
+if(!routines){ routines = {}; Object.entries(ROUTINES_SEED).forEach(([id, r])=> routines[id] = normR(r)); put(RK, routines); try{ localStorage.setItem('dd_seed_mando', '1'); }catch(e){} }
 else Object.keys(routines).forEach(id=> routines[id] = normR(routines[id]));
+{ let done = '1'; try{ done = localStorage.getItem('dd_seed_mando'); }catch(e){}
+  if(!done){ if(!routines.d4 && !Object.values(routines).some(r=> r.name === 'Mando')){ const mx = Math.max(-1, ...Object.values(routines).map(r=> +r.o || 0)); routines.d4 = { name: 'Mando', color: '#607d8b', items: MANDO_ITEMS, note: ROUTINES_SEED.d4.note, o: mx + 1 }; put(RK, routines); }
+    try{ localStorage.setItem('dd_seed_mando', '1'); }catch(e){} } }
 let checks = load(CK, {}), tempos = load(TK, {}), logs = load(GK, {}), ejs = load('dd_ejs', {});
 function saveE(){ put('dd_ejs', ejs); dirty(); }
 /* ejs: { id: ejercicio propio, o cambios a uno de ejemplo, o {del:1} si se ha borrado } */
@@ -580,6 +613,7 @@ const handG = h=> `<g class="o">${FING.map(f=> `<path ${fpath(f)}/>`).join('')}<
 const HANDS = `<svg class="hd" viewBox="0 0 440 252" role="img" aria-label="Manos: se ilumina el dedo que toca"><g transform="translate(0 12)"><g transform="translate(214 0) scale(-1 1)">${handG('L')}</g><g transform="translate(226 0)">${handG('R')}</g></g><text class="hl" x="104" y="248">izquierda</text><text class="hl" x="336" y="248">derecha</text></svg>`;
 const NONE = { L: [], R: [] };
 function paint(svg, on, nx){
+  if(!svg) return;
   on = on || NONE; nx = nx || NONE;
   svg.querySelectorAll('.k').forEach(k=>{ const h = k.dataset.f[0], i = +k.dataset.f[1], a = on[h].includes(i + 10), o = a || on[h].includes(i); k.classList.toggle('on', o); k.classList.toggle('ac', a); k.classList.toggle('nx', !o && nx[h].includes(i)); });
 }
@@ -652,9 +686,10 @@ function card(x, showFam, ri){
   let sb = `<span class="sb">${esc(NLAB[x.l] + (showFam ? ' · ' + x.f.name : '') + ' · ' + bpmOf(x) + ' bpm' + ((x.sub || 1) > 1 ? ' · ' + SUBS[x.sub] : ''))}</span>`;
   const line = (tags, txt, html)=> `<span class="sb2"><i>${tags}</i><span>${html ? txt : esc(txt)}</span></span>`;
   sb += line('<b class="am">Cómo</b>', x.h);
-  sb += line(isSym(x) ? '<b class="iz">SIM</b>' : '<b class="de">ASIM</b>', notation(x), true);
-  const nb = 4 + (inR && ri > 0 ? 1 : 0);
-  const acts = `<button class="pl" data-play="1" title="Ver en las manos" aria-label="Ver en las manos">▶</button><button data-edit="1" title="Editar" aria-label="Editar">✎</button><button class="${d ? 'on' : ''}" data-ck="1" title="Marcar automatizado" aria-label="Marcar automatizado">✓</button>` + (inR ? `<button data-rm="${ri}" title="Quitar de la rutina" aria-label="Quitar de la rutina">×</button>${ri > 0 ? `<button data-up="${ri}" title="Subir" aria-label="Subir">↑</button>` : ''}` : `<button data-add="1" title="Añadir a una rutina" aria-label="Añadir a una rutina">+</button>`);
+  const nh = !!x.f.nohands;
+  if(!nh) sb += line(isSym(x) ? '<b class="iz">SIM</b>' : '<b class="de">ASIM</b>', notation(x), true);
+  const nb = (nh ? 3 : 4) + (inR && ri > 0 ? 1 : 0);
+  const acts = `${nh ? '' : '<button class="pl" data-play="1" title="Ver en las manos" aria-label="Ver en las manos">▶</button>'}<button data-edit="1" title="Editar" aria-label="Editar">✎</button><button class="${d ? 'on' : ''}" data-ck="1" title="Marcar automatizado" aria-label="Marcar automatizado">✓</button>` + (inR ? `<button data-rm="${ri}" title="Quitar de la rutina" aria-label="Quitar de la rutina">×</button>${ri > 0 ? `<button data-up="${ri}" title="Subir" aria-label="Subir">↑</button>` : ''}` : `<button data-add="1" title="Añadir a una rutina" aria-label="Añadir a una rutina">+</button>`);
   return `<div class="card${d ? ' done' : ''}" data-name="${esc(x.id)}" style="background:${NFILL[x.l] || '#e5e5ea'};min-height:${nb * 34 + 14}px"><b>${esc(x.n)}</b><span class="an">${esc(x.d)}</span>${sb}<span class="acts">${acts}</span></div>`;
 }
 
@@ -737,8 +772,8 @@ function startSes(rid){
 }
 function sesHTML(){
   const it = S.items[S.i];
-  return `<div class="ssec">${esc(it.sec || 'ejercicio')} · ${S.i + 1}/${S.items.length}</div><div class="sname">${esc(it.x.n)}</div><div class="sdesc">${esc(it.x.h)}</div>
-    <div class="padwrap">${HANDS}</div><div class="plcap"></div><div class="plkeys"></div>
+  return `<div class="ssec">${esc(it.sec || 'ejercicio')} · ${S.i + 1}/${S.items.length}</div><div class="sname">${esc(it.x.n)}</div>${it.x.f.nohands ? `<div class="sdesc" style="opacity:.85;font-size:15px;padding-top:8px">${esc(it.x.d)}</div><div class="sdesc">${esc(it.x.h)}</div><div class="plcap" hidden></div><div class="plkeys" hidden></div>` : `<div class="sdesc">${esc(it.x.h)}</div>
+    <div class="padwrap">${HANDS}</div><div class="plcap"></div><div class="plkeys"></div>`}
     <div class="stimer prep">${it.x.beats || 4}</div>
     <div class="plctl" id="sctl"><button data-s="prev" aria-label="Ejercicio anterior">‹</button><button data-s="toggle" class="stog" aria-label="Pausa">❚❚</button><button data-s="next" aria-label="Siguiente">›</button><span class="sep"></span><button data-s="dn" aria-label="Más lento">−</button><span class="bpmv"><span id="bv">${bpmOf(it.x)}</span> <small>bpm</small></span><button data-s="up" aria-label="Más rápido">+</button></div>
     <div class="srate" id="srate"><p>¿Cómo ha salido?</p><div class="chips"><button class="chip" data-rate="-1">Con fallos · −5</button><button class="chip" data-rate="0">Bien</button><button class="chip" data-rate="1">Limpio · +5</button></div>
@@ -826,15 +861,18 @@ function openEdit(id, fam){
     <div class="ef2"><label class="ef">Familia<select id="e-f">${DATA.map(f=> `<option value="${f.id}"${f.id === f0 ? ' selected' : ''}>${esc(f.name)}</option>`).join('')}</select></label>
     <label class="ef">Tempo (bpm de la negra)<input id="e-b" type="number" inputmode="numeric" min="20" max="300" value="${x ? x.bpm0 : 60}"></label></div>
     <div class="ef">Nivel<div class="chips" id="e-l">${[1, 2, 3, 4].map(k=> `<button class="chip${k === lv ? ' on' : ''}" data-elv="${k}" style="${k === lv ? '' : 'box-shadow:inset 0 -3px 0 ' + NFILL[k]}">${NLAB[k]}</button>`).join('')}</div></div>
+    <div class="ehands">
     <div class="ef">Compás · pulsos por compás<div class="chips" id="e-bt">${[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(k=> `<button class="chip" data-ebt="${k}" style="min-width:40px">${k}</button>`).join('')}</div></div>
     <div class="ef">Subdivisión · cuántas filas tiene cada pulso<div class="chips" id="e-sub">${Object.entries(SUBS).map(([k, n])=> `<button class="chip" data-esub="${k}">${n}${k > 1 ? ' · ' + k : ''}</button>`).join('')}</div></div>
     <div class="ef">Manos<div class="chips"><button class="chip" data-esym="1">Simétrico</button><button class="chip" data-esym="0">No simétrico</button></div></div>
     <div class="egw" id="egw"></div>
     <div class="chips" style="padding-top:8px;justify-content:center"><button class="chip" data-eadd="1">+ pulso</button><button class="chip" data-eadd="bar">+ compás</button><button class="chip" data-edel="1">− pulso</button><button class="chip go" data-eplay="1">▶ Probar</button></div>
     <div class="ehint">Cada fila es un paso; los números son los pulsos (1 2 3 4) y en medio se cuentan las subdivisiones (1 y · 1 e y a · 1 y a en tresillos). La línea fina separa pulsos y la gruesa, compases. Una fila vacía es un silencio. Toca una casilla una vez para marcarla (azul) y otra vez para que sea un acento, un golpe más fuerte (rojo); la tercera la vacía. Dedos del 1 (pulgar) al 5 (meñique): izquierda en negativo, de −5 a −1, y derecha en positivo, de +1 a +5, como las manos sobre la mesa.</div>
+    </div><div class="ehint enh">Los ejercicios de esta familia no llevan tabla ni manos dibujadas: solo el texto, el tempo y el tiempo en las rutinas.</div>
     ${x ? `<div class="chips" style="padding-top:14px">${x.edited && !x.own ? '<button class="chip" data-ex="orig">↺ Volver al original</button>' : ''}<button class="chip" data-ex="del" style="color:#d32f2f">Eliminar ejercicio</button></div>` : ''}
   </div></div>`;
-  edit.classList.add('open'); drawGrid();
+  edit.classList.add('open'); drawGrid(); nhUI();
+  $('#e-f', edit).addEventListener('change', nhUI);
 }
 function drawGrid(){
   edit.querySelectorAll('[data-esym]').forEach(b=> b.classList.toggle('on', (b.dataset.esym === '1') === ED.sym));
@@ -860,6 +898,8 @@ function edObj(){
 }
 /* junta un dedo en una casilla; si ya estaba, gana el acento */
 function addF(arr, v){ const k = arr.findIndex(q=> q % 10 === v % 10); if(k < 0) arr.push(v); else if(v > 10) arr[k] = v; }
+const edNH = ()=>{ const f = FAMS.get($('#e-f', edit).value); return !!(f && f.nohands); };
+function nhUI(){ const nh = edNH(); $('.ehands', edit).style.display = nh ? 'none' : ''; $('.enh', edit).style.display = nh ? '' : 'none'; }
 const marked = ()=> ED.rows.some(r=> r.L.length || r.R.length);
 function closeEdit(){ if(!edit.classList.contains('open')) return; edit.classList.remove('open'); edit.innerHTML = ''; ED = null; }
 edit.addEventListener('click', e=>{
@@ -899,7 +939,7 @@ edit.addEventListener('click', e=>{
   if(act === 'save'){
     const o = edObj();
     if(!o.n){ toast('Ponle un nombre'); $('#e-n', edit).focus(); return; }
-    if(!marked()){ toast('Marca alguna casilla'); return; }
+    if(!edNH() && !marked()){ toast('Marca alguna casilla'); return; }
     const nid = id || 'u' + Date.now().toString(36);
     ejs[nid] = Object.assign({ own: id ? !!ED.x.own : true }, o);
     saveE(); rebuild(); closeEdit(); rerender(); toast(id ? 'Guardado' : 'Ejercicio creado');
@@ -1259,7 +1299,7 @@ document.addEventListener('click', e=>{
   if(t.closest('[data-add]')){ addFlow(n, t.closest('[data-add]')); return; }
   if(t.closest('[data-edit]')){ openEdit(n); return; }
   if(t.closest('[data-ck]')){ const on = toggle(n); if(filt.pend && on || R){ rerender(); } else { c.classList.toggle('done', on); t.closest('[data-ck]').classList.toggle('on', on); } toast(on ? 'Automatizado' : 'Desmarcado'); return; }
-  openPlay(n);
+  const cx = BYN.get(n); if(cx && cx.f.nohands) openEdit(n); else openPlay(n);
 });
 document.addEventListener('input', e=>{
   const b = e.target.closest && e.target.closest('[data-rid]'); if(!b || !routines[b.dataset.rid]) return;
