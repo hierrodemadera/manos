@@ -1,7 +1,7 @@
 {
  "format": "dedos-datos",
  "version": 1,
- "updated": "2026-11-23T16:59:32.077Z",
+ "updated": "2026-11-23T17:11:19.760Z",
  "checks": {},
  "routines": {
   "d1": {
@@ -160,6 +160,9 @@
    "beats": 4
   },
   "Pulgar quieto": {
+   "del": 1
+  },
+  "Ráfaga de trino": {
    "del": 1
   },
   "Trino anular-meñique": {
