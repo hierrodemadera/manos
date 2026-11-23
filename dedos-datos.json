@@ -1,7 +1,7 @@
 {
  "format": "dedos-datos",
  "version": 1,
- "updated": "2026-11-23T16:40:47.811Z",
+ "updated": "2026-11-23T16:41:26.007Z",
  "checks": {},
  "routines": {
   "d1": {
@@ -109,6 +109,9 @@
  "logs": {},
  "ejs": {
   "Levantar uno a uno": {
+   "del": 1
+  },
+  "Pulgar quieto": {
    "del": 1
   },
   "Trino anular-meñique": {
