@@ -1,7 +1,7 @@
 {
  "format": "dedos-datos",
  "version": 1,
- "updated": "2026-11-22T19:37:53.727Z",
+ "updated": "2026-11-23T16:29:00.243Z",
  "checks": {},
  "routines": {
   "d1": {
@@ -107,6 +107,20 @@
  },
  "tempos": {},
  "logs": {},
- "ejs": {},
+ "ejs": {
+  "Trino índice-medio": {
+   "own": false,
+   "n": "Escalera: trino pulgar-índice-medio-anular-meñique",
+   "d": "alternar dos dedos vecinos lo más regular posible",
+   "h": "muñeca suelta, dedos cerca de la mesa",
+   "fam": "calentamiento",
+   "l": 1,
+   "bpm0": 100,
+   "L": "1 2 1 2 3 2 3 2 3 4 3 4 5 4 5 4",
+   "R": "1 2 1 2 3 2 3 2 3 4 3 4 5 4 5 4",
+   "sub": 1,
+   "beats": 4
+  }
+ },
  "metPresets": {}
 }
