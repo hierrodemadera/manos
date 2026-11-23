@@ -1,7 +1,7 @@
 {
  "format": "dedos-datos",
  "version": 1,
- "updated": "2026-11-23T16:49:55.409Z",
+ "updated": "2026-11-23T16:53:15.242Z",
  "checks": {},
  "routines": {
   "d1": {
@@ -116,6 +116,19 @@
   },
   "Levantar uno a uno": {
    "del": 1
+  },
+  "Paralelo": {
+   "own": false,
+   "n": "Paralelo",
+   "d": "las dos manos se mueven hacia el mismo lado",
+   "h": "la izquierda sube de número mientras la derecha baja",
+   "fam": "disociacion",
+   "l": 2,
+   "bpm0": 50,
+   "L": "1 2 3 4 5 . . .",
+   "R": "5 4 3 2 1 . . .",
+   "sub": 1,
+   "beats": 4
   },
   "Parejas alternas": {
    "own": false,
