@@ -96,6 +96,8 @@ svg{display:block;}
 .card .acts button{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;background:rgba(255,255,255,.55);color:#1c1c1e;}
 .card .acts button:hover{background:rgba(255,255,255,.9);}
 .card .acts button.on{background:#34c759;color:#fff;}
+.card .acts button.fav{font-size:16px;}
+.card .acts button.fav.on{background:#ffd400;color:#1c1c1e;}
 .card .acts button.pl{background:#2f8cf5;color:#fff;font-size:12px;}
 /* rutinas */
 .blk{border-radius:16px;padding:10px;margin:10px 0 14px;}
@@ -402,6 +404,11 @@ const DATA = [
   ]},
 ]},
 { id:"ritmos", name:"Ritmos", desc:"batería, hip hop, ritmos latinos y flamenco; los acentos van en rojo", color:"#ffb300", subs:[
+  { name:"Polirritmos en una mano", items:[
+    ["Pirámide 2 contra 3", 3, "índice y medio a la vez, cada uno a su ritmo: el índice da 2 golpes y el medio 3 en el mismo tiempo", "las dos manos igual. Coinciden solo al empezar cada vuelta. Aprende primero cada dedo solo, luego júntalos a ¼×", "23 . 3 2 3 .", "23 . 3 2 3 .", 50, 3, 2],
+    ["Pirámide 2-3-4", 4, "tres capas a la vez: índice 2 golpes, medio 3 y anular 4 en el mismo tiempo", "las dos manos igual. Con el sonido en Notas cada dedo suena distinto y se oye cada capa", "234 . . 4 3 . 24 . 3 4 . .", "234 . . 4 3 . 24 . 3 4 . .", 40, 6, 2],
+    ["Pirámide de cinco dedos", 4, "cada dedo a su ritmo: pulgar 1 golpe, índice 2, medio 3, anular 4 y meñique 6, todo en el mismo tiempo", "las dos manos igual. Todos coinciden en el primer golpe de cada vuelta. Empieza a ¼× y añade los dedos de uno en uno", "12345 . 5 4 35 . 245 . 35 4 5 .", "12345 . 5 4 35 . 245 . 35 4 5 .", 35, 6, 2],
+  ]},
   { name:"Estilos", items:[
     ["Boom bap", 2, "el ritmo clásico del hip hop: bombo, caja y charles", "derecha (índice) el charles en corcheas; izquierda: pulgar el bombo, medio la caja en el 2 y el 4", "1 . 3! . 1 1 3! .", "2 2 2 2 2 2 2 2", 85, 2, 4],
     ["Clave 3-2", 3, "la clave de son: tres golpes en un compás y dos en el siguiente", "la izquierda marca los pulsos con el pulgar; la derecha toca la clave", "1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .", "2 . . 2 . . 2 . . . 2 . 2 . . .", 80, 2, 4],
@@ -536,6 +543,9 @@ else { Object.keys(routines).forEach(id=> routines[id] = normR(routines[id])); i
 { let done = '1'; try{ done = localStorage.getItem('dd_seed_mando'); }catch(e){}
   if(!done){ if(!routines.d4 && !Object.values(routines).some(r=> r.name === 'Mando')){ const mx = Math.max(-1, ...Object.values(routines).map(r=> +r.o || 0)); routines.d4 = { name: 'Mando', color: '#607d8b', items: MANDO_ITEMS, note: ROUTINES_SEED.d4.note, o: mx + 1 }; put(RK, routines); }
     try{ localStorage.setItem('dd_seed_mando', '1'); }catch(e){} } }
+let favs = load('dd_favs', {});
+const isFav = n=> Object.prototype.hasOwnProperty.call(favs, n);
+function toggleFav(n){ if(isFav(n)) delete favs[n]; else favs[n] = new Date().toISOString(); put('dd_favs', favs); dirty(); return isFav(n); }
 let checks = load(CK, {}), tempos = load(TK, {}), logs = load(GK, {}), ejs = load('dd_ejs', {});
 function saveE(){ put('dd_ejs', ejs); dirty(); }
 /* ejs: { id: ejercicio propio, o cambios a uno de ejemplo, o {del:1} si se ha borrado } */
@@ -621,7 +631,7 @@ function paint(svg, on, nx){
 const body = $('#body'), qIn = $('#q');
 const TABN = { m: 'Manos', e: 'Ejercicios', r: 'Rutinas' };
 let tab0 = 'e'; try{ const v = localStorage.getItem('dd_tab'); if(v === 'm' || v === 'r' || v === 'e') tab0 = v; }catch(e){}
-let stack = [{ t: 'root', ty: tab0 }], pos = 0, q = '', filt = { l: null, pend: false };
+let stack = [{ t: 'root', ty: tab0 }], pos = 0, q = '', filt = { l: null, pend: false, fav: false };
 const cur = ()=> stack[pos];
 const ty = ()=> cur().ty;
 function go(s){ if(!s.ty) s.ty = ty(); stack = stack.slice(0, pos + 1); stack.push(s); pos++; render(true); }
@@ -631,7 +641,7 @@ function fwd(){ if(pos < stack.length - 1){ pos++; render(true); } }
 function crumb(){
   const s = cur(), c = $('.crumb');
   const root = `<a data-v="home">${esc(TABN[s.ty].toUpperCase())}</a>`;
-  c.innerHTML = s.t === 'root' ? esc(TABN[s.ty].toUpperCase()) : s.t === 'fam' ? root + '<i>›</i>' + esc(DATA.find(f=> f.id === s.id).name) : s.t === 'all' ? root + '<i>›</i>Todos' : root + '<i>›</i>Búsqueda';
+  c.innerHTML = s.t === 'root' ? esc(TABN[s.ty].toUpperCase()) : s.t === 'fam' ? root + '<i>›</i>' + esc(DATA.find(f=> f.id === s.id).name) : s.t === 'all' ? root + '<i>›</i>Todos' : s.t === 'favs' ? root + '<i>›</i>Favoritos' : root + '<i>›</i>Búsqueda';
   $('[data-v=back]').disabled = pos === 0; $('[data-v=fwd]').disabled = pos >= stack.length - 1;
   document.querySelectorAll('.tab').forEach(b=> b.classList.toggle('on', b.dataset.tab === s.ty));
   try{ localStorage.setItem('dd_tab', s.ty); }catch(e){}
@@ -639,7 +649,7 @@ function crumb(){
 function render(anim){
   crumb(); body.scrollTop = 0;
   const s = cur();
-  if(s.t === 'root') (s.ty === 'r' ? renderRut() : s.ty === 'm' ? renderManos() : renderRoot()); else if(s.t === 'fam') renderFam(DATA.find(f=> f.id === s.id)); else if(s.t === 'all') renderAll(); else renderSearch();
+  if(s.t === 'root') (s.ty === 'r' ? renderRut() : s.ty === 'm' ? renderManos() : renderRoot()); else if(s.t === 'fam') renderFam(DATA.find(f=> f.id === s.id)); else if(s.t === 'all') renderAll(); else if(s.t === 'favs') renderFavs(); else renderSearch();
   if(anim && body.firstElementChild) body.firstElementChild.classList.add('in');
 }
 function rerender(){ const y = body.scrollTop; render(false); body.scrollTop = y; }
@@ -652,7 +662,7 @@ const row = (attr, sq, name, n, d)=> `<button class="row" ${attr}><span class="s
 function renderRoot(){
   const done = ALL.filter(x=> isDone(x.id)).length;
   const rows = DATA.map(f=>{ const it = ALL.filter(x=> x.f === f); return row(`data-fam="${f.id}"`, 'background:' + f.color, f.name, it.length, it.filter(x=> isDone(x.id)).length); }).join('');
-  body.innerHTML = `<div class="page"><div class="lh">Ejercicios<small>✓ ${done} / ${ALL.length}</small></div><div class="chips"><button class="chip go" data-new="">+ nuevo ejercicio</button></div><div class="list" style="margin-bottom:12px">${row('data-all="1"', ALLSQ, 'Todos los ejercicios', ALL.length, done)}</div><div class="list">${rows}</div></div>`;
+  body.innerHTML = `<div class="page"><div class="lh">Ejercicios<small>✓ ${done} / ${ALL.length}</small></div><div class="chips"><button class="chip go" data-new="">+ nuevo ejercicio</button></div><div class="list" style="margin-bottom:12px">${row('data-favs="1"', 'background:#ffd400;box-shadow:none', '★ Favoritos', ALL.filter(x=> isFav(x.id)).length, ALL.filter(x=> isFav(x.id) && isDone(x.id)).length)}${row('data-all="1"', ALLSQ, 'Todos los ejercicios', ALL.length, done)}</div><div class="list">${rows}</div></div>`;
 }
 
 /* --- portada de Manos --- */
@@ -678,9 +688,9 @@ function fingerInfo(f){
 }
 
 /* --- filtros y fichas --- */
-const passes = x=> (!filt.l || x.l === filt.l) && (!filt.pend || !isDone(x.id));
+const passes = x=> (!filt.l || x.l === filt.l) && (!filt.pend || !isDone(x.id)) && (!filt.fav || isFav(x.id));
 function chipsHTML(){
-  return `<div class="chips">${[1,2,3,4].map(k=> `<button class="chip${filt.l === k ? ' on' : ''}" data-lv="${k}" style="${filt.l === k ? '' : 'box-shadow:inset 0 -3px 0 ' + NFILL[k]}">${NLAB[k]}</button>`).join('')}<span class="sep"></span><button class="chip${filt.pend ? ' on' : ''}" data-pend="1">Sin automatizar</button></div>`;
+  return `<div class="chips">${[1,2,3,4].map(k=> `<button class="chip${filt.l === k ? ' on' : ''}" data-lv="${k}" style="${filt.l === k ? '' : 'box-shadow:inset 0 -3px 0 ' + NFILL[k]}">${NLAB[k]}</button>`).join('')}<span class="sep"></span><button class="chip${filt.fav ? ' on' : ''}" data-ffav="1">★ Favoritos</button><button class="chip${filt.pend ? ' on' : ''}" data-pend="1">Sin automatizar</button></div>`;
 }
 function card(x, showFam, ri){
   const d = isDone(x.id), inR = ri != null;
@@ -689,8 +699,8 @@ function card(x, showFam, ri){
   sb += line('<b class="am">Cómo</b>', x.h);
   const nh = !!x.f.nohands;
   if(!nh) sb += line(isSym(x) ? '<b class="iz">SIM</b>' : '<b class="de">ASIM</b>', notation(x), true);
-  const nb = (nh ? 3 : 4) + (inR && ri > 0 ? 1 : 0);
-  const acts = `${nh ? '' : '<button class="pl" data-play="1" title="Ver en las manos" aria-label="Ver en las manos">▶</button>'}<button data-edit="1" title="Editar" aria-label="Editar">✎</button><button class="${d ? 'on' : ''}" data-ck="1" title="Marcar automatizado" aria-label="Marcar automatizado">✓</button>` + (inR ? `<button data-rm="${ri}" title="Quitar de la rutina" aria-label="Quitar de la rutina">×</button>${ri > 0 ? `<button data-up="${ri}" title="Subir" aria-label="Subir">↑</button>` : ''}` : `<button data-add="1" title="Añadir a una rutina" aria-label="Añadir a una rutina">+</button>`);
+  const nb = (nh ? 4 : 5) + (inR && ri > 0 ? 1 : 0), fv = isFav(x.id);
+  const acts = `${nh ? '' : '<button class="pl" data-play="1" title="Ver en las manos" aria-label="Ver en las manos">▶</button>'}<button data-edit="1" title="Editar" aria-label="Editar">✎</button><button class="${d ? 'on' : ''}" data-ck="1" title="Marcar automatizado" aria-label="Marcar automatizado">✓</button><button class="fav${fv ? ' on' : ''}" data-fav="1" title="${fv ? 'Quitar de favoritos' : 'Añadir a favoritos'}" aria-label="${fv ? 'Quitar de favoritos' : 'Añadir a favoritos'}">${fv ? '★' : '☆'}</button>` + (inR ? `<button data-rm="${ri}" title="Quitar de la rutina" aria-label="Quitar de la rutina">×</button>${ri > 0 ? `<button data-up="${ri}" title="Subir" aria-label="Subir">↑</button>` : ''}` : `<button data-add="1" title="Añadir a una rutina" aria-label="Añadir a una rutina">+</button>`);
   return `<div class="card${d ? ' done' : ''}" data-name="${esc(x.id)}" style="background:${NFILL[x.l] || '#e5e5ea'};min-height:${nb * 34 + 14}px"><b>${esc(x.n)}</b><span class="an">${esc(x.d)}</span>${sb}<span class="acts">${acts}</span></div>`;
 }
 
@@ -1338,6 +1348,14 @@ function renderAll(){
   body.innerHTML = h + '</div>';
 }
 
+/* --- favoritos: todos juntos, sean de la familia que sean --- */
+function renderFavs(){
+  const its = ALL.filter(x=> isFav(x.id) && (!filt.l || x.l === filt.l) && (!filt.pend || !isDone(x.id))).sort((a, b)=> a.l - b.l);
+  let h = `<div class="page"><div class="lh">★ Favoritos<small>${its.length}</small></div>${chipsHTML().replace(/<button class="chip[^"]*" data-ffav="1">[^<]*<\/button>/, '')}`;
+  h += its.length ? `<div class="grid">${its.map(x=> card(x, true)).join('')}</div>` : `<div class="empty">${ALL.some(x=> isFav(x.id)) ? 'Nada con estos filtros.' : 'Aún no tienes favoritos. Toca ☆ en cualquier ejercicio para añadirlo aquí.'}</div>`;
+  body.innerHTML = h + '</div>';
+}
+
 /* --- búsqueda --- */
 function renderSearch(){
   const qq = norm(q.trim()), hit = x=> !qq || norm(x.n).includes(qq) || norm(x.d).includes(qq) || norm(x.h).includes(qq);
@@ -1379,7 +1397,7 @@ function menuAct(a){
   closeMenu();
   if(a === 'theme'){ const d = !document.documentElement.classList.contains('dark'); document.documentElement.classList.toggle('dark', d); try{ localStorage.setItem('dd_theme', d ? 'dark' : 'light'); }catch(e){} }
   if(a === 'export'){
-    const blob = new Blob([JSON.stringify({ format: 'dedos-datos', version: 1, updated: new Date().toISOString(), checks, routines, tempos, logs, ejs, metPresets: mPresets }, null, 1)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify({ format: 'dedos-datos', version: 1, updated: new Date().toISOString(), checks, routines, tempos, logs, ejs, metPresets: mPresets, favs }, null, 1)], { type: 'application/json' });
     const u = URL.createObjectURL(blob), l = document.createElement('a'); l.href = u; l.download = 'dedos-datos-' + new Date().toISOString().slice(0, 10) + '.json'; document.body.appendChild(l); l.click(); l.remove(); setTimeout(()=> URL.revokeObjectURL(u), 2000);
     toast('Copia guardada');
   }
@@ -1400,6 +1418,7 @@ $('#imp').addEventListener('change', e=>{
       if(isMap(o.routines)){ snapR(); Object.entries(o.routines).forEach(([id, rr])=>{ if(!routines[id]) routines[id] = normR(rr); }); dropOld(routines); saveR(); }
       if(isMap(o.tempos)){ Object.assign(tempos, o.tempos); saveT(); }
       if(isMap(o.logs)){ Object.assign(logs, o.logs); saveLog(); }
+      if(isMap(o.favs)){ Object.entries(o.favs).forEach(([id, v])=>{ if(!isFav(id)) favs[id] = v || new Date().toISOString(); }); put('dd_favs', favs); }
       if(isMap(o.metPresets)){ Object.entries(o.metPresets).forEach(([id, v])=>{ if(!mPresets[id]) mPresets[id] = v; }); savePresets(); }
       if(isMap(o.ejs)){ Object.entries(o.ejs).forEach(([id, v])=>{ if(!ejs[id]) ejs[id] = v; }); saveE(); rebuild(); }
       saveChecks(); rerender(); toast('Copia cargada');
@@ -1421,6 +1440,8 @@ document.addEventListener('click', e=>{
   const fam = t.closest('[data-fam]'); if(fam){ go({ t: 'fam', id: fam.dataset.fam }); return; }
   const lv = t.closest('[data-lv]'); if(lv){ const k = +lv.dataset.lv; filt.l = filt.l === k ? null : k; rerender(); return; }
   if(t.closest('[data-all]')){ go({ t: 'all' }); return; }
+  if(t.closest('[data-favs]')){ go({ t: 'favs' }); return; }
+  if(t.closest('[data-ffav]')){ filt.fav = !filt.fav; rerender(); return; }
   const nw = t.closest('[data-new]'); if(nw){ openEdit(null, nw.dataset.new); return; }
   const fk = t.closest('#padm [data-f]'); if(fk){ fingerInfo(fk.dataset.f); return; }
   const sd = t.closest('[data-snd]'); if(sd){ setSnd(sd.dataset.snd); return; }
@@ -1439,6 +1460,7 @@ document.addEventListener('click', e=>{
   if(R && t.closest('[data-up]')){ const i = +t.closest('[data-up]').dataset.up; snapR(); [R.items[i - 1], R.items[i]] = [R.items[i], R.items[i - 1]]; saveR(); rerender(); return; }
   const c = t.closest('.card'); if(!c) return;
   const n = c.dataset.name;
+  if(t.closest('[data-fav]')){ const on = toggleFav(n); if(filt.fav || cur().t === 'favs') rerender(); else { const fb = t.closest('[data-fav]'); fb.classList.toggle('on', on); fb.textContent = on ? '★' : '☆'; fb.title = on ? 'Quitar de favoritos' : 'Añadir a favoritos'; fb.setAttribute('aria-label', fb.title); } toast(on ? 'Añadido a favoritos' : 'Quitado de favoritos'); return; }
   if(t.closest('[data-add]')){ addFlow(n, t.closest('[data-add]')); return; }
   if(t.closest('[data-edit]')){ openEdit(n); return; }
   if(t.closest('[data-ck]')){ const on = toggle(n); if(filt.pend && on || R){ rerender(); } else { c.classList.toggle('done', on); t.closest('[data-ck]').classList.toggle('on', on); } toast(on ? 'Automatizado' : 'Desmarcado'); return; }
@@ -1473,13 +1495,14 @@ document.addEventListener('keydown', e=>{
   back();
 });
 window.ddApply = function(m){
+  favs = m.f || {}; put('dd_favs', favs);
   checks = m.c || {}; tempos = m.t || {}; logs = m.g || {}; ejs = m.x || {}; put('dd_ejs', ejs); mPresets = m.p || {}; put('dd_metp', mPresets); if(met.classList.contains('open')) mRender(); rebuild(); routines = {}; Object.entries(m.r || {}).forEach(([id, r])=> routines[id] = normR(r));
   if(dropOld(routines)) setTimeout(dirty, 50);
   put(CK, checks); put(RK, routines); put(TK, tempos); put(GK, logs);
   const a = document.activeElement; if(a && a.matches && a.matches('[data-rname],[data-rnote],[data-hed],#pkq')) return;
   if(pick.classList.contains('open')) drawPick(); if(!S) rerender();
 };
-window.ddData = ()=> ({ c: checks, r: routines, t: tempos, g: logs, x: ejs, p: mPresets });
+window.ddData = ()=> ({ c: checks, r: routines, t: tempos, g: logs, x: ejs, p: mPresets, f: favs });
 window.ddNormR = normR;
 
 render(true);
@@ -1548,7 +1571,7 @@ function loadBase(){ try{ return JSON.parse(localStorage.getItem(BASEK) || 'null
 function saveBase(o){ try{ localStorage.setItem(BASEK, S(o)); }catch(e){} }
 const isMap = o=> o && typeof o === 'object' && !Array.isArray(o);
 const sortMap = (m, f)=>{ const o = {}; Object.keys(isMap(m) ? m : {}).sort().forEach(k=> o[k] = f ? f(m[k]) : m[k]); return o; };
-const snap = ()=>{ const d = window.ddData(); return { c: sortMap(d.c, v=> v || ''), r: sortMap(d.r, window.ddNormR), t: sortMap(d.t), g: sortMap(d.g), x: sortMap(d.x), p: sortMap(d.p) }; };
+const snap = ()=>{ const d = window.ddData(); return { c: sortMap(d.c, v=> v || ''), r: sortMap(d.r, window.ddNormR), t: sortMap(d.t), g: sortMap(d.g), x: sortMap(d.x), p: sortMap(d.p), f: sortMap(d.f, v=> v || '') }; };
 const valid = o=> !!o && o.format === 'dedos-datos' && isMap(o.checks);
 
 /* ---------- fusión a tres bandas: lo último común (b), lo de aquí (l) y lo de GitHub (r) ---------- */
@@ -1584,15 +1607,15 @@ async function sync(){
         if(!txt){ const rr = await ghApi('/contents/' + path + '?ref=' + encodeURIComponent(gh.branch), { raw: true }); txt = await rr.text(); }
         let o = null; try{ o = JSON.parse(txt); }catch(e){}
         if(!valid(o)) throw new Error('el archivo ' + FILE + ' de GitHub no es de DEDOS');
-        remote = { c: sortMap(o.checks, v=> v || ''), r: sortMap(o.routines, window.ddNormR), t: sortMap(o.tempos), g: sortMap(o.logs), x: sortMap(o.ejs), p: sortMap(o.metPresets) };
+        remote = { c: sortMap(o.checks, v=> v || ''), r: sortMap(o.routines, window.ddNormR), t: sortMap(o.tempos), g: sortMap(o.logs), x: sortMap(o.ejs), p: sortMap(o.metPresets), f: sortMap(o.favs, v=> v || '') };
       }
       const base = loadBase(), local = snap();
       let merged;
       if(remote && firstMode === 'replace') merged = remote;
-      else if(remote) merged = { c: mapMerge(base && base.c, local.c, remote.c), r: mapMerge(base && base.r, local.r, remote.r), t: mapMerge(base && base.t, local.t, remote.t), g: mapMerge(base && base.g, local.g, remote.g), x: mapMerge(base && base.x, local.x, remote.x), p: mapMerge(base && base.p, local.p, remote.p) };
+      else if(remote) merged = { c: mapMerge(base && base.c, local.c, remote.c), r: mapMerge(base && base.r, local.r, remote.r), t: mapMerge(base && base.t, local.t, remote.t), g: mapMerge(base && base.g, local.g, remote.g), x: mapMerge(base && base.x, local.x, remote.x), p: mapMerge(base && base.p, local.p, remote.p), f: mapMerge(base && base.f, local.f, remote.f) };
       else merged = local;
       if(!remote || S(merged) !== S(remote)){
-        const body = { message: 'DEDOS: ' + new Date().toLocaleString('es-ES'), content: b64enc(S({ format: 'dedos-datos', version: 1, updated: new Date().toISOString(), checks: merged.c, routines: merged.r, tempos: merged.t, logs: merged.g, ejs: merged.x, metPresets: merged.p }, null, 1)), branch: gh.branch };
+        const body = { message: 'DEDOS: ' + new Date().toLocaleString('es-ES'), content: b64enc(S({ format: 'dedos-datos', version: 1, updated: new Date().toISOString(), checks: merged.c, routines: merged.r, tempos: merged.t, logs: merged.g, ejs: merged.x, metPresets: merged.p, favs: merged.f }, null, 1)), branch: gh.branch };
         if(sha) body.sha = sha;
         const p = await ghApi('/contents/' + path, { method: 'PUT', body });
         if(p.status === 409 || p.status === 422) continue;
