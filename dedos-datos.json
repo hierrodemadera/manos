@@ -1,7 +1,7 @@
 {
  "format": "dedos-datos",
  "version": 1,
- "updated": "2026-11-23T16:53:23.630Z",
+ "updated": "2026-11-23T16:59:09.824Z",
  "checks": {},
  "routines": {
   "d1": {
@@ -115,6 +115,9 @@
    "del": 1
   },
   "Levantar uno a uno": {
+   "del": 1
+  },
+  "Paradiddle": {
    "del": 1
   },
   "Paralelo": {
