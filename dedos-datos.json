@@ -1,7 +1,7 @@
 {
  "format": "dedos-datos",
  "version": 1,
- "updated": "2026-11-23T16:29:00.243Z",
+ "updated": "2026-11-23T16:32:04.035Z",
  "checks": {},
  "routines": {
   "d1": {
@@ -108,6 +108,9 @@
  "tempos": {},
  "logs": {},
  "ejs": {
+  "Trino medio-anular": {
+   "del": 1
+  },
   "Trino índice-medio": {
    "own": false,
    "n": "Escalera: trino pulgar-índice-medio-anular-meñique",
