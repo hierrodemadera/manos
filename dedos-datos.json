@@ -1,7 +1,7 @@
 {
  "format": "dedos-datos",
  "version": 1,
- "updated": "2026-11-23T18:30:00.000Z",
+ "updated": "2026-11-23T18:30:36.199Z",
  "checks": {},
  "routines": {
   "d1": {
@@ -87,6 +87,19 @@
  "tempos": {},
  "logs": {},
  "ejs": {
+  "Ola": {
+   "own": false,
+   "n": "Ola",
+   "d": "del meñique al índice y vuelta; despierta todos los dedos",
+   "h": "dedos sobre la mesa, uniforme, sin acelerar",
+   "fam": "calentamiento",
+   "l": 1,
+   "bpm0": 80,
+   "L": "1 2 3 4 5 4 3 2",
+   "R": "1 2 3 4 5 4 3 2",
+   "sub": 1,
+   "beats": 4
+  },
   "Trino índice-medio": {
    "own": false,
    "n": "Escalera: trino pulgar-índice-medio-anular-meñique",
