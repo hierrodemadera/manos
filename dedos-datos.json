@@ -1,7 +1,7 @@
 {
  "format": "dedos-datos",
  "version": 1,
- "updated": "2026-11-23T16:41:26.007Z",
+ "updated": "2026-11-23T16:43:39.452Z",
  "checks": {},
  "routines": {
   "d1": {
@@ -110,6 +110,19 @@
  "ejs": {
   "Levantar uno a uno": {
    "del": 1
+  },
+  "Parejas alternas": {
+   "own": false,
+   "n": "Parejas alternas",
+   "d": "dos dedos a la vez, alternando parejas",
+   "h": "índice+anular contra medio+meñique",
+   "fam": "independencia",
+   "l": 2,
+   "bpm0": 60,
+   "L": "13 24 35 24",
+   "R": "13 24 35 24",
+   "sub": 1,
+   "beats": 4
   },
   "Pulgar quieto": {
    "del": 1
