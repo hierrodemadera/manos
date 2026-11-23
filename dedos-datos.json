@@ -1,7 +1,7 @@
 {
  "format": "dedos-datos",
  "version": 1,
- "updated": "2026-11-23T17:11:19.760Z",
+ "updated": "2026-11-23T17:11:24.053Z",
  "checks": {},
  "routines": {
   "d1": {
@@ -120,6 +120,9 @@
    "R": "2 2 2 2 2 2 2 2",
    "sub": 2,
    "beats": 4
+  },
+  "Doble toque": {
+   "del": 1
   },
   "Escalera": {
    "del": 1
