@@ -1,7 +1,7 @@
 {
  "format": "dedos-datos",
  "version": 1,
- "updated": "2026-11-23T16:53:15.242Z",
+ "updated": "2026-11-23T16:53:23.630Z",
  "checks": {},
  "routines": {
   "d1": {
@@ -125,8 +125,8 @@
    "fam": "disociacion",
    "l": 2,
    "bpm0": 50,
-   "L": "1 2 3 4 5 . . .",
-   "R": "5 4 3 2 1 . . .",
+   "L": "1 2 3 4 5",
+   "R": "5 4 3 2 1",
    "sub": 1,
    "beats": 4
   },
