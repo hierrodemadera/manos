@@ -92,6 +92,7 @@ svg{display:block;}
 .card .sb2 .iz{background:#6a4fb3;}
 .card .sb2 .de{background:#0070d1;}
 .card .sb2 .am{background:#8e8e93;}
+.card .sb2 .po{background:linear-gradient(90deg,#34c759,#0a84ff,#ff9500,#af52de);}
 .card .acts{position:absolute;right:6px;top:6px;display:flex;flex-direction:column;gap:4px;}
 .card .acts button{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;background:rgba(255,255,255,.55);color:#1c1c1e;}
 .card .acts button:hover{background:rgba(255,255,255,.9);}
@@ -135,6 +136,20 @@ svg{display:block;}
 .hd .k.nx,.hd .k.sel{fill:rgba(47,140,245,.28);}
 .hd .k.on{fill:#2f8cf5;}
 .hd .k.on.ac{fill:#e5383b;}
+.hd.poly .k.on[data-f$="1"]{fill:#ff2d55;}.hd.poly .k.on[data-f$="2"]{fill:#34c759;}.hd.poly .k.on[data-f$="3"]{fill:#0a84ff;}.hd.poly .k.on[data-f$="4"]{fill:#ff9500;}.hd.poly .k.on[data-f$="5"]{fill:#af52de;}
+.pgeo{max-width:250px;margin:2px auto 0;color:var(--ink);}
+.pgs{width:100%;height:auto;display:block;}
+.pring{fill:none;stroke:var(--b);stroke-width:2;}
+.phand{stroke:currentColor;stroke-width:2;opacity:.45;}
+.phd{fill:currentColor;}
+.pv{transition:r .08s;}
+.pfing{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:8px 12px 2px;}
+.pfc{display:flex;flex-direction:column;align-items:center;gap:2px;border-radius:12px;background:var(--h);padding:6px 2px;}
+.pfc b{font-size:12px;filter:brightness(.85);}
+.pfc.off{opacity:.45;}
+.pfn{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1;}
+.pfb{display:flex;gap:4px;}
+.pfb button{width:32px;height:32px;border-radius:9px;background:var(--solid);font-weight:700;font-size:16px;}
 .acc,.card .acc{display:inline;color:#e5383b;font-weight:800;font-size:inherit;}
 .hd .hl{fill:currentColor;opacity:.45;font-size:12px;text-anchor:middle;}
 .hd.tap .k{cursor:pointer;}
@@ -404,6 +419,12 @@ const DATA = [
   ]},
 ]},
 { id:"ritmos", name:"Ritmos", desc:"batería, hip hop, ritmos latinos y flamenco; los acentos van en rojo", color:"#ffb300", subs:[
+  { name:"Polígonos · cada dedo a su ritmo", items:[
+    ["Polígonos 3:2", 3, "índice 2 golpes y medio 3 en cada vuelta: una línea contra un triángulo", "las dos manos igual. Mira la aguja: cada vértice que toca es un golpe de ese dedo", ".", ".", 60, 1, 2, "0 2 3 0 0"],
+    ["Polígonos 4:3:2", 4, "índice 2, medio 3 y anular 4 en cada vuelta: línea, triángulo y cuadrado", "las dos manos igual. Empieza a ¼× y apaga dedos (−) hasta que salga; luego añádelos", ".", ".", 50, 1, 4, "0 2 3 4 0"],
+    ["Polígonos 5:4:3:2", 4, "el del vídeo: índice 2, medio 3, anular 4 y meñique 5 en cada vuelta", "las dos manos igual. Cada dedo va a su ritmo y todos coinciden solo al empezar la vuelta", ".", ".", 40, 1, 4, "0 2 3 4 5"],
+    ["Polígonos de cinco dedos", 4, "cada dedo da tantos golpes como su número: pulgar 1, índice 2, medio 3, anular 4 y meñique 5", "las dos manos igual. El pulgar marca el inicio de cada vuelta; los demás se reparten por encima", ".", ".", 40, 1, 4, "1 2 3 4 5"],
+  ]},
   { name:"Polirritmos en una mano", items:[
     ["Pirámide 2 contra 3", 3, "índice y medio a la vez, cada uno a su ritmo: el índice da 2 golpes y el medio 3 en el mismo tiempo", "las dos manos igual. Coinciden solo al empezar cada vuelta. Aprende primero cada dedo solo, luego júntalos a ¼×", "23 . 3 2 3 .", "23 . 3 2 3 .", 50, 3, 2],
     ["Pirámide 2-3-4", 4, "tres capas a la vez: índice 2 golpes, medio 3 y anular 4 en el mismo tiempo", "las dos manos igual. Con el sonido en Notas cada dedo suena distinto y se oye cada capa", "234 . . 4 3 . 24 . 3 4 . .", "234 . . 4 3 . 24 . 3 4 . .", 40, 6, 2],
@@ -550,13 +571,18 @@ let checks = load(CK, {}), tempos = load(TK, {}), logs = load(GK, {}), ejs = loa
 function saveE(){ put('dd_ejs', ejs); dirty(); }
 /* ejs: { id: ejercicio propio, o cambios a uno de ejemplo, o {del:1} si se ha borrado } */
 const SUBS = { 1: 'negras', 2: 'corcheas', 3: 'tresillos', 4: 'semicorcheas', 6: 'seisillos', 8: 'fusas' };
-const normE = o=> ({ n: String(o.n || 'Sin nombre'), l: clamp(+o.l || 1, 1, 4), d: String(o.d || ''), h: String(o.h || ''), L: String(o.L || '.'), R: String(o.R || '.'), bpm0: clamp(+o.bpm0 || 60, 20, 300), sub: SUBS[+o.sub] ? +o.sub : 1, beats: clamp(+o.beats || 4, 1, 12) });
+/* polirritmo: golpes por vuelta de cada dedo, del pulgar al meñique (0 = apagado), p. ej. "0 2 3 4 5" */
+const polyStr = v=>{ const a = String(v || '').trim().split(/\s+/).map(Number); return a.length === 5 && a.every(n=> Number.isInteger(n) && n >= 0 && n <= 9) && a.some(n=> n > 0) ? a.join(' ') : ''; };
+const polyArr = x=> x.poly.split(' ').map(Number);
+const FCOL = { 1: '#ff2d55', 2: '#34c759', 3: '#0a84ff', 4: '#ff9500', 5: '#af52de' };
+const polyText = x=> polyArr(x).map((n, i)=> n ? FN[i + 1] + ' ' + n : '').filter(Boolean).join(' · ');
+const normE = o=> ({ n: String(o.n || 'Sin nombre'), l: clamp(+o.l || 1, 1, 4), d: String(o.d || ''), h: String(o.h || ''), L: String(o.L || '.'), R: String(o.R || '.'), bpm0: clamp(+o.bpm0 || 60, 20, 300), sub: SUBS[+o.sub] ? +o.sub : 1, beats: clamp(+o.beats || 4, 1, 12), poly: polyStr(o.poly) });
 function rebuild(){
   ALL = [];
   const base = new Set();
   DATA.forEach(f=> f.subs.forEach(s=> s.items.forEach(a=>{
     const id = a[0], o = ejs[id]; base.add(id); if(o && o.del) return;
-    const x = { id, n: a[0], l: a[1], d: a[2], h: a[3], L: a[4], R: a[5], bpm0: a[6], sub: a[7] || 1, beats: a[8] || 4, f, s, own: false, edited: !!o };
+    const x = { id, n: a[0], l: a[1], d: a[2], h: a[3], L: a[4], R: a[5], bpm0: a[6], sub: a[7] || 1, beats: a[8] || 4, poly: polyStr(a[9]), f, s, own: false, edited: !!o };
     if(o){ Object.assign(x, normE(o)); const nf = FAMS.get(o.fam); if(nf && nf !== f){ x.f = nf; x.s = USUB[nf.id]; } }
     ALL.push(x);
   })));
@@ -698,7 +724,8 @@ function card(x, showFam, ri){
   const line = (tags, txt, html)=> `<span class="sb2"><i>${tags}</i><span>${html ? txt : esc(txt)}</span></span>`;
   sb += line('<b class="am">Cómo</b>', x.h);
   const nh = !!x.f.nohands;
-  if(!nh) sb += line(isSym(x) ? '<b class="iz">SIM</b>' : '<b class="de">ASIM</b>', notation(x), true);
+  if(x.poly) sb += line('<b class="po">POLI</b>', polyArr(x).map((n, i)=> n ? `<b style="color:${FCOL[i + 1]};filter:brightness(.8)">${esc(FN[i + 1])} ${n}</b>` : '').filter(Boolean).join(' · ') + ` <span style="opacity:.6">por vuelta de ${x.beats || 4} pulsos</span>`, true);
+  else if(!nh) sb += line(isSym(x) ? '<b class="iz">SIM</b>' : '<b class="de">ASIM</b>', notation(x), true);
   const nb = (nh ? 4 : 5) + (inR && ri > 0 ? 1 : 0), fv = isFav(x.id);
   const acts = `${nh ? '' : '<button class="pl" data-play="1" title="Ver en las manos" aria-label="Ver en las manos">▶</button>'}<button data-edit="1" title="Editar" aria-label="Editar">✎</button><button class="${d ? 'on' : ''}" data-ck="1" title="Marcar automatizado" aria-label="Marcar automatizado">✓</button><button class="fav${fv ? ' on' : ''}" data-fav="1" title="${fv ? 'Quitar de favoritos' : 'Añadir a favoritos'}" aria-label="${fv ? 'Quitar de favoritos' : 'Añadir a favoritos'}">${fv ? '★' : '☆'}</button>` + (inR ? `<button data-rm="${ri}" title="Quitar de la rutina" aria-label="Quitar de la rutina">×</button>${ri > 0 ? `<button data-up="${ri}" title="Subir" aria-label="Subir">↑</button>` : ''}` : `<button data-add="1" title="Añadir a una rutina" aria-label="Añadir a una rutina">+</button>`);
   return `<div class="card${d ? ' done' : ''}" data-name="${esc(x.id)}" style="background:${NFILL[x.l] || '#e5e5ea'};min-height:${nb * 34 + 14}px"><b>${esc(x.n)}</b><span class="an">${esc(x.d)}</span>${sb}<span class="acts">${acts}</span></div>`;
@@ -708,6 +735,7 @@ function card(x, showFam, ri){
 const play = $('#play'); let pl = null;
 function openPlay(a){
   const x = typeof a === 'string' ? BYN.get(a) : a; if(!x) return; const name = x.n;
+  if(x.poly){ openPoly(x); return; }
   const st = steps(x), bpm = bpmOf(x);
   play.innerHTML = `<div class="pk" role="dialog"><div class="pkh"><span>${esc(name)}</span><button data-plx="1">Cerrar</button></div><div class="padwrap">${HANDS}</div>
     <div class="plcap"></div><div class="plkeys"></div><div class="pldots">${st.map((_, i)=> `<i data-i="${i}"${i && i % (x.sub || 1) === 0 && (x.sub || 1) > 1 ? ' style="margin-left:8px"' : ''}></i>`).join('')}</div>
@@ -728,9 +756,10 @@ function plShow(i, sound){
 }
 /* el reproductor va con el reloj del audio: el sonido se programa por adelantado y el dibujo lo sigue */
 function plSetRun(r){ pl.run = r; $('.pltog', play).textContent = r ? '❚❚' : '▶'; pl.q = []; if(r){ pl.k = (pl.i + 1) % pl.steps.length; pl.nt = now() + .06; } else if(pl.i >= 0) plShow(pl.i); }
-function closePlay(){ if(!play.classList.contains('open')) return; MT.linked = false; pl = null; play.classList.remove('open'); play.innerHTML = ''; audioIdle(); }
+function closePlay(){ if(!play.classList.contains('open')) return; MT.linked = false; pl = null; PP = null; play.classList.remove('open'); play.innerHTML = ''; audioIdle(); }
 play.addEventListener('click', e=>{
   if(e.target === play || e.target.closest('[data-plx]')){ closePlay(); return; }
+  if(PP){ ppClick(e); return; }
   if(!pl) return;
   const sd = e.target.closest('[data-snd]'); if(sd){ setSnd(sd.dataset.snd); if(!pl.run && !MT.linked && pl.i >= 0) plShow(pl.i, true); return; }
   if(e.target.closest('[data-plink]')){ if(MT.linked){ MT.linked = false; mStop(); plSetRun(false); } else linkPlayer(); return; }
@@ -843,6 +872,93 @@ setInterval(()=>{
   if(pl.nt < now() - .25) pl.nt = now() + .05;
   while(pl.nt < now() + .12){ playStep(pl.steps[pl.k], pl.nt); pl.q.push({ t: pl.nt, i: pl.k }); pl.k = (pl.k + 1) % n; pl.nt += dur; }
 }, 25);
+/* ===== polirritmos con polígonos: cada dedo es un polígono, cada vértice un golpe ===== */
+/* lista de golpes de una vuelta (fracción 0-1): dedos que tocan y clic del pulso */
+function polyEvents(cs, beats){
+  const m = new Map(), add = (f, fn)=>{ const k = Math.round(f * 1e6); let e = m.get(k); if(!e){ e = { f, fs: [], click: 0 }; m.set(k, e); } fn(e); };
+  for(let j = 0; j < beats; j++) add(j / beats, e=> e.click = j === 0 ? 2 : 1);
+  cs.forEach((n, i)=>{ for(let k = 0; k < n; k++) add(k / n, e=> e.fs.push(i + 1 + (k === 0 ? 10 : 0))); });
+  return [...m.values()].sort((a, b)=> a.f - b.f);
+}
+const polyInit = (cs, beats, bpm, t0)=> ({ ev: polyEvents(cs, beats), C: beats * 60 / bpm, t0, a0: t0, i: 0 });
+function polyRun(P, fn){
+  if(P.t0 + P.C < now() - .2){ P.t0 = P.a0 = now() + .05; P.i = 0; }
+  for(let g = 0; g < 400; g++){ const e = P.ev[P.i], t = P.t0 + e.f * P.C; if(t >= now() + .12) break; fn(e, t); P.i++; if(P.i >= P.ev.length){ P.i = 0; P.t0 += P.C; } }
+}
+function polySVG(cs){
+  const c = 130, R = 108, pt = (k, n)=>{ const a = -Math.PI / 2 + 2 * Math.PI * k / n; return [(c + R * Math.cos(a)).toFixed(1), (c + R * Math.sin(a)).toFixed(1)]; };
+  let sh = '', dots = '';
+  cs.map((n, i)=> [n, i + 1]).filter(([n])=> n > 0).sort((a, b)=> b[0] - a[0]).forEach(([n, f])=>{
+    const ps = Array.from({ length: n }, (_, k)=> pt(k, n)), col = FCOL[f];
+    if(n === 2) sh += `<line x1="${ps[0][0]}" y1="${ps[0][1]}" x2="${ps[1][0]}" y2="${ps[1][1]}" stroke="${col}" stroke-width="3.5" stroke-linecap="round"/>`;
+    else if(n > 2) sh += `<polygon points="${ps.map(q=> q.join(',')).join(' ')}" fill="none" stroke="${col}" stroke-width="3.5" stroke-linejoin="round"/>`;
+    dots += ps.map((q, k)=> `<circle class="pv" data-fr="${k / n}" cx="${q[0]}" cy="${q[1]}" r="6" fill="${col}"/>`).join('');
+  });
+  return `<svg class="pgs" viewBox="0 0 260 260" role="img" aria-label="Polígonos: cada vértice es un golpe"><circle class="pring" cx="${c}" cy="${c}" r="${R}"/>${sh}${dots}<line class="phand" x1="${c}" y1="${c}" x2="${c}" y2="${c - R}"/><circle class="phd" cx="${c}" cy="${c - R}" r="5"/></svg>`;
+}
+/* mueve la aguja y hace crecer el vértice que acaba de sonar */
+function polyDraw(svg, P){
+  if(!svg || !P) return;
+  const ph = ((now() - P.a0) / P.C % 1 + 1) % 1, a = -Math.PI / 2 + 2 * Math.PI * ph, x = 130 + 108 * Math.cos(a), y = 130 + 108 * Math.sin(a);
+  const h = svg._h || (svg._h = svg.querySelector('.phand')), d = svg._d || (svg._d = svg.querySelector('.phd')), vs = svg._v || (svg._v = [...svg.querySelectorAll('.pv')].map(v=> [v, +v.dataset.fr]));
+  h.setAttribute('x2', x.toFixed(1)); h.setAttribute('y2', y.toFixed(1)); d.setAttribute('cx', x.toFixed(1)); d.setAttribute('cy', y.toFixed(1));
+  vs.forEach(([v, fr])=>{ const lit = now() >= P.a0 && (ph - fr + 1) % 1 < .07; if(v._l !== lit){ v._l = lit; v.setAttribute('r', lit ? 11 : 6); } });
+}
+/* reproductor de polígonos */
+let PP = null;
+function openPoly(x){
+  PP = { x, cs: polyArr(x), beats: x.beats || 4, bpm: bpmOf(x), spd: 1, run: false, P: null, q: [], clk: false };
+  play.innerHTML = `<div class="pk" role="dialog"><div class="pkh"><span>${esc(x.n)}</span><button data-plx="1">Cerrar</button></div><div class="pgeo" id="pgeo"></div>
+    <div class="padwrap">${HANDS}</div><div class="plcap"></div>
+    <div class="pfing" id="pfing"></div>
+    <div class="plctl"><button data-pp="toggle" class="pltog" aria-label="Empezar">▶</button><span class="sep"></span>${[1, .5, .25].map(v=> `<button class="chip${v === 1 ? ' on' : ''}" data-ppspd="${v}">${v === 1 ? '1×' : v === .5 ? '½×' : '¼×'}</button>`).join('')}</div>
+    <div class="chips" style="justify-content:center;padding:6px 12px 0"><span class="rcount">vuelta</span><button class="chip" data-pp="b-">−</button><span class="rcount" id="ppb"></span><button class="chip" data-pp="b+">+</button><span class="sep"></span><button class="chip" data-pp="t-">−</button><span class="rcount" id="ppt"></span><button class="chip" data-pp="t+">+</button></div>
+    <div class="chips" style="justify-content:center;padding:6px 12px 0">${sndChips('Sin sonido')}<button class="chip" data-pp="clk">♩ pulso</button></div>
+    <div class="chips" style="justify-content:center;padding:8px 12px 0"><button class="chip go" data-pp="save">Guardar cambios</button><button class="chip" data-pp="new">Guardar como nuevo</button></div>
+    <div class="plhint" id="pphint"></div></div>`;
+  play.querySelector('.padwrap svg').classList.add('poly');
+  play.classList.add('open'); audio(); ppDraw(); ppRun(true);
+}
+function ppDraw(){
+  $('#pgeo', play).innerHTML = polySVG(PP.cs); PP.svg = $('#pgeo svg', play);
+  $('#pfing', play).innerHTML = PP.cs.map((n, i)=> `<div class="pfc${n ? '' : ' off'}"><b style="color:${FCOL[i + 1]}">${FN[i + 1]}</b><span class="pfn">${n || '—'}</span><span class="pfb"><button data-pf="${i},-1" aria-label="Menos golpes del ${FN[i + 1]}">−</button><button data-pf="${i},1" aria-label="Más golpes del ${FN[i + 1]}">+</button></span></div>`).join('');
+  $('#ppb', play).textContent = PP.beats + ' pulsos'; $('#ppt', play).textContent = PP.bpm + ' bpm';
+  const sec = PP.beats * 60 / PP.bpm / PP.spd;
+  $('#pphint', play).textContent = `Una vuelta = ${PP.beats} pulsos a ${PP.bpm} bpm${PP.spd < 1 ? ' a ' + (PP.spd === .5 ? '½×' : '¼×') : ''} (${sec.toFixed(1).replace('.', ',')} s). Los números son golpes por vuelta; 0 apaga el dedo.`;
+  $('.plcap', play).textContent = PP.cs.some(n=> n) ? PP.cs.map((n, i)=> n ? FN[i + 1] + ' ' + n : '').filter(Boolean).join(' · ') : 'enciende algún dedo con +';
+  if(PP.run) ppRestart(); else polyDraw(PP.svg, { a0: now() + 1e6, C: 1 });
+}
+function ppRestart(){ PP.q = []; PP.P = PP.cs.some(n=> n) ? polyInit(PP.cs, PP.beats, PP.bpm * PP.spd, now() + .08) : null; }
+function ppRun(r){ PP.run = r; const t = $('.pltog', play); t.textContent = r ? '❚❚' : '▶'; t.setAttribute('aria-label', r ? 'Pausa' : 'Empezar'); if(r){ audio(); ppRestart(); } else { PP.P = null; PP.q = []; paint(play.querySelector('.padwrap svg')); } }
+function ppClick(e){
+  const sd = e.target.closest('[data-snd]'); if(sd){ setSnd(sd.dataset.snd); return; }
+  const sp = e.target.closest('[data-ppspd]'); if(sp){ PP.spd = +sp.dataset.ppspd; play.querySelectorAll('[data-ppspd]').forEach(c=> c.classList.toggle('on', c === sp)); ppDraw(); return; }
+  const pf = e.target.closest('[data-pf]'); if(pf){ const [i, d] = pf.dataset.pf.split(',').map(Number); PP.cs[i] = clamp(PP.cs[i] + d, 0, 9); ppDraw(); return; }
+  const b = e.target.closest('[data-pp]'); if(!b) return;
+  const a = b.dataset.pp, x = PP.x;
+  if(a === 'toggle'){ ppRun(!PP.run); return; }
+  if(a === 'clk'){ PP.clk = !PP.clk; b.classList.toggle('on', PP.clk); return; }
+  if(a === 'b-' || a === 'b+'){ PP.beats = clamp(PP.beats + (a === 'b+' ? 1 : -1), 1, 12); ppDraw(); return; }
+  if(a === 't-' || a === 't+'){ PP.bpm = clamp(PP.bpm + (a === 't+' ? 5 : -5), 20, 300); ppDraw(); return; }
+  if(a === 'save' || a === 'new'){
+    if(!PP.cs.some(n=> n)){ toast('Enciende algún dedo'); return; }
+    const base = { n: x.n, d: x.d, h: x.h, fam: x.f.id, l: x.l, bpm0: x.bpm0, L: '.', R: '.', sub: 1, beats: PP.beats, poly: PP.cs.join(' ') };
+    if(a === 'new'){ const nid = 'u' + Date.now().toString(36); ejs[nid] = Object.assign({ own: true }, base, { n: x.n + ' (mío)', bpm0: PP.bpm }); saveE(); rebuild(); PP.x = BYN.get(nid); $('.pkh span', play).textContent = PP.x.n; toast('Guardado como «' + PP.x.n + '»'); }
+    else { ejs[x.id] = Object.assign({ own: !!x.own }, base); saveE(); rebuild(); PP.x = BYN.get(x.id); setBpm(PP.x, PP.bpm); toast('Cambios guardados'); }
+    rerender(); return;
+  }
+}
+setInterval(()=>{
+  if(!PP || !PP.run || !PP.P) return;
+  polyRun(PP.P, (e, t)=>{ if(PP.clk && e.click) click(t, e.click === 2); playStep({ L: e.fs, R: e.fs }, t); PP.q.push({ t, e }); });
+}, 25);
+(function ppFrame(){
+  requestAnimationFrame(ppFrame);
+  if(!PP || !PP.run || !PP.P) return;
+  polyDraw(PP.svg, PP.P);
+  let v = null; while(PP.q.length && PP.q[0].t <= now()) v = PP.q.shift();
+  if(v && v.e.fs.length){ paint(play.querySelector('.padwrap svg'), { L: v.e.fs, R: v.e.fs }); }
+})();
 (function plFrame(){ requestAnimationFrame(plFrame); if(!pl || !pl.q.length) return; const n = now(); let v = null; while(pl.q.length && pl.q[0].t <= n) v = pl.q.shift(); if(v) plShow(v.i); })();
 async function wake(on){ try{ if(on && navigator.wakeLock && !lock){ lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', ()=> lock = null); } else if(!on && lock){ await lock.release(); lock = null; } }catch(e){} }
 document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible' && S && S.phase !== 'done') wake(true); });
@@ -864,7 +980,7 @@ function startSes(rid){
 function sesHTML(){
   const it = S.items[S.i];
   return `<div class="ssec">${esc(it.sec || 'ejercicio')} · ${S.i + 1}/${S.items.length}</div><div class="sname">${esc(it.x.n)}</div>${it.x.f.nohands ? `<div class="sdesc" style="opacity:.85;font-size:15px;padding-top:8px">${esc(it.x.d)}</div><div class="sdesc">${esc(it.x.h)}</div><div class="plcap" hidden></div><div class="plkeys" hidden></div>` : `<div class="sdesc">${esc(it.x.h)}</div>
-    <div class="padwrap">${HANDS}</div><div class="plcap"></div><div class="plkeys"></div>`}
+    ${it.x.poly ? `<div class="pgeo">${polySVG(polyArr(it.x))}</div>` : ''}<div class="padwrap">${HANDS}</div><div class="plcap"></div><div class="plkeys"></div>`}
     <div class="stimer prep">${it.x.beats || 4}</div>
     <div class="plctl" id="sctl"><button data-s="prev" aria-label="Ejercicio anterior">‹</button><button data-s="toggle" class="stog" aria-label="Pausa">❚❚</button><button data-s="next" aria-label="Siguiente">›</button><span class="sep"></span><button data-s="dn" aria-label="Más lento">−</button><span class="bpmv"><span id="bv">${bpmOf(it.x)}</span> <small>bpm</small></span><button data-s="up" aria-label="Más rápido">+</button></div>
     <div class="srate" id="srate"><p>¿Cómo ha salido?</p><div class="chips"><button class="chip" data-rate="-1">Con fallos · −5</button><button class="chip" data-rate="0">Bien</button><button class="chip" data-rate="1">Limpio · +5</button></div>
@@ -876,16 +992,23 @@ function startEx(){
   const sb = $('#sbody', ses); sb.innerHTML = sesHTML();
   S.svg = $('svg', sb); S.st = steps(S.items[S.i].x); S.ci = Math.min(S.items[S.i].x.beats || 4, 4);
   S.phase = 'prep'; S.left = S.items[S.i].secs; S.running = true; kb = 0; vq = []; nextT = now() + .2;
-  paint(S.svg); const c = capOf(S.st[0]); $('.plcap', sb).innerHTML = 'empieza: ' + c[0]; $('.plkeys', sb).innerHTML = c[1] || ' ';
+  S.P = null; S.geo = $('.pgeo svg', sb); if(S.geo) S.svg = $('.padwrap svg', sb);
+  if(S.items[S.i].x.poly && S.svg) S.svg.classList.add('poly');
+  paint(S.svg); const c = capOf(S.st[0]); $('.plcap', sb).innerHTML = S.items[S.i].x.poly ? esc(polyText(S.items[S.i].x)) : 'empieza: ' + c[0]; $('.plkeys', sb).innerHTML = S.items[S.i].x.poly ? 'por vuelta de ' + (S.items[S.i].x.beats || 4) + ' pulsos' : c[1] || ' ';
 }
 setInterval(()=>{
   if(!S || !S.running || S.phase === 'rate' || S.phase === 'done') return;
   const x = S.items[S.i].x, spb = 60 / bpmOf(x), sub = x.sub || 1, bt = x.beats || 4, ci = S.ci;
   while(nextT < now() + .12){
     if(kb < ci){ click(nextT, kb === 0); vq.push({ t: nextT, k: kb }); kb++; nextT += spb; continue; }
+    if(x.poly) break;
     const st = kb - ci; if(st % sub === 0) click(nextT, (st / sub) % bt === 0);
     playStep(S.st[st % S.st.length], nextT);
     vq.push({ t: nextT, k: kb }); kb++; nextT += spb / sub;
+  }
+  if(x.poly && kb >= ci){
+    if(!S.P) S.P = polyInit(polyArr(x), bt, bpmOf(x), Math.max(nextT, now() + .05));
+    polyRun(S.P, (e, t)=>{ if(e.click) click(t, e.click === 2); playStep({ L: e.fs, R: e.fs }, t); vq.push({ t, k: ci, pe: e }); });
   }
 }, 25);
 function frame(ts){
@@ -896,8 +1019,9 @@ function frame(ts){
   while(vq.length && vq[0].t <= n){
     const v = vq.shift();
     if(v.k < S.ci){ S.phase = 'prep'; tm.textContent = S.ci - v.k; tm.classList.add('prep'); }
-    else{ if(S.phase !== 'run'){ S.phase = 'run'; tm.classList.remove('prep'); } const b = v.k - S.ci, st = S.st[b % S.st.length]; paint(S.svg, st); const c = capOf(st); $('.plcap', sb).innerHTML = c[0]; $('.plkeys', sb).innerHTML = c[1] || ' '; }
+    else{ if(S.phase !== 'run'){ S.phase = 'run'; tm.classList.remove('prep'); } if(v.pe){ if(v.pe.fs.length) paint(S.svg, { L: v.pe.fs, R: v.pe.fs }); continue; } const b = v.k - S.ci, st = S.st[b % S.st.length]; paint(S.svg, st); const c = capOf(st); $('.plcap', sb).innerHTML = c[0]; $('.plkeys', sb).innerHTML = c[1] || ' '; }
   }
+  if(S.P && S.geo) polyDraw(S.geo, S.P);
   if(S.phase === 'run'){ S.left -= dt; if(S.left <= 0){ toRate(); return; } const s = Math.ceil(S.left); tm.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
 }
 requestAnimationFrame(frame);
@@ -906,7 +1030,7 @@ function sesPause(){
   if(S.phase === 'rate' || S.phase === 'done') return;
   const t = $('.stog', ses);
   if(S.running){ S.running = false; vq = []; t.textContent = '▶'; }
-  else{ audio(); S.running = true; if(S.phase === 'prep') kb = 0; nextT = now() + .15; t.textContent = '❚❚'; }
+  else{ audio(); S.running = true; S.P = null; if(S.phase === 'prep') kb = 0; nextT = now() + .15; t.textContent = '❚❚'; }
 }
 function sesNext(){ S.i++; if(S.i >= S.items.length) sesFinish(); else { audio(); startEx(); } }
 function sesFinish(){
@@ -928,7 +1052,7 @@ ses.addEventListener('click', e=>{
   if(a === 'toggle') sesPause();
   if(a === 'next') toRate();
   if(a === 'prev'){ if(S.i > 0) S.i--; audio(); startEx(); }
-  if(a === 'dn' || a === 'up'){ $('#bv', ses).textContent = setBpm(x, bpmOf(x) + (a === 'up' ? 5 : -5)); }
+  if(a === 'dn' || a === 'up'){ $('#bv', ses).textContent = setBpm(x, bpmOf(x) + (a === 'up' ? 5 : -5)); if(S.P){ S.P = null; nextT = now() + .1; } }
   if(a === 'mute'){ muted = !muted; s.textContent = muted ? 'sin sonido' : 'con sonido'; }
 });
 
@@ -943,7 +1067,7 @@ function gridFrom(x){
 function openEdit(id, fam){
   const x = id ? BYN.get(id) : null; if(id && !x) return;
   const g = x ? gridFrom(x) : { sym: true, rows: [0, 1, 2, 3].map(()=> ({ L: [], R: [] })) };
-  ED = { id, x, sym: g.sym, rows: g.rows, sub: x ? x.sub || 1 : 1, beats: x ? x.beats || 4 : 4, sel: null, anchor: 0, hist: [] };
+  ED = { id, x, sym: g.sym, rows: g.rows, sub: x ? x.sub || 1 : 1, beats: x ? x.beats || 4 : 4, sel: null, anchor: 0, hist: [], poly: x ? x.poly || '' : '' };
   while(ED.rows.length % ED.sub) ED.rows.push({ L: [], R: [] });
   const f0 = x ? x.f.id : (fam || DATA[0].id), lv = x ? x.l : 1;
   edit.innerHTML = `<div class="pk" role="dialog" aria-label="${x ? 'Editar ejercicio' : 'Nuevo ejercicio'}"><div class="pkh"><span>${x ? 'Editar ejercicio' : 'Nuevo ejercicio'}</span><button data-ex="close" style="background:var(--h) !important;color:inherit !important">Cancelar</button><button data-ex="save">Guardar</button></div>
@@ -962,7 +1086,7 @@ function openEdit(id, fam){
     <div class="etb" id="etb"></div>
     <div class="chips" style="padding-top:8px;justify-content:center"><button class="chip" data-eop="undo">↶ Deshacer</button><button class="chip" data-eadd="1">+ pulso</button><button class="chip" data-eadd="bar">+ compás</button><button class="chip" data-edel="1">− pulso</button><button class="chip go" data-eplay="1">▶ Probar</button></div>
     <div class="ehint">Cada fila es un paso; los números son los pulsos (1 2 3 4) y en medio se cuentan las subdivisiones (1 y · 1 e y a · 1 y a en tresillos). La línea fina separa pulsos y la gruesa, compases. Una fila vacía es un silencio. Toca una casilla una vez para marcarla (azul) y otra vez para que sea un acento, un golpe más fuerte (rojo); la tercera la vacía. Dedos del 1 (pulgar) al 5 (meñique): izquierda en negativo, de −5 a −1, y derecha en positivo, de +1 a +5, como las manos sobre la mesa.</div>
-    </div><div class="ehint enh">Los ejercicios de esta familia no llevan tabla ni manos dibujadas: solo el texto, el tempo y el tiempo en las rutinas.</div>
+    </div><div class="ehint epo">Es un polirritmo: los golpes de cada dedo se cambian en su reproductor (▶), donde también se guardan. Aquí puedes cambiar el nombre, la explicación, el nivel, la familia y el tempo.</div><div class="ehint enh">Los ejercicios de esta familia no llevan tabla ni manos dibujadas: solo el texto, el tempo y el tiempo en las rutinas.</div>
     ${x ? `<div class="chips" style="padding-top:14px">${x.edited && !x.own ? '<button class="chip" data-ex="orig">↺ Volver al original</button>' : ''}<button class="chip" data-ex="del" style="color:#d32f2f">Eliminar ejercicio</button></div>` : ''}
   </div></div>`;
   edit.classList.add('open'); drawGrid(); nhUI();
@@ -1040,12 +1164,12 @@ function edObj(){
   const tk = a=> a.length ? a.slice().sort((p, q)=> p % 10 - q % 10).map(v=> v > 10 ? (v - 10) + '!' : String(v)).join('') : '.';
   const L = ED.rows.map(r=> tk(r.L)).join(' '), Rr = ED.sym ? L : ED.rows.map(r=> tk(r.R)).join(' ');
   const lb = $('#e-l .on', edit);
-  return { n: v('#e-n'), d: v('#e-d'), h: v('#e-h'), fam: v('#e-f'), l: lb ? +lb.dataset.elv : 1, bpm0: clamp(Math.round(+v('#e-b') || 60), 20, 300), L, R: Rr, sub: ED.sub, beats: ED.beats };
+  return { n: v('#e-n'), d: v('#e-d'), h: v('#e-h'), fam: v('#e-f'), l: lb ? +lb.dataset.elv : 1, bpm0: clamp(Math.round(+v('#e-b') || 60), 20, 300), L: ED.poly ? '.' : L, R: ED.poly ? '.' : Rr, sub: ED.poly ? 1 : ED.sub, beats: ED.beats, poly: ED.poly };
 }
 /* junta un dedo en una casilla; si ya estaba, gana el acento */
 function addF(arr, v){ const k = arr.findIndex(q=> q % 10 === v % 10); if(k < 0) arr.push(v); else if(v > 10) arr[k] = v; }
 const edNH = ()=>{ const f = FAMS.get($('#e-f', edit).value); return !!(f && f.nohands); };
-function nhUI(){ const nh = edNH(); $('.ehands', edit).style.display = nh ? 'none' : ''; $('.enh', edit).style.display = nh ? '' : 'none'; }
+function nhUI(){ const nh = edNH(), po = !!ED.poly; $('.ehands', edit).style.display = nh || po ? 'none' : ''; $('.enh', edit).style.display = nh && !po ? '' : 'none'; $('.epo', edit).style.display = po ? '' : 'none'; }
 const marked = ()=> ED.rows.some(r=> r.L.length || r.R.length);
 function closeEdit(){ if(!edit.classList.contains('open')) return; edit.classList.remove('open'); edit.innerHTML = ''; ED = null; }
 edit.addEventListener('click', e=>{
@@ -1090,7 +1214,7 @@ edit.addEventListener('click', e=>{
   if(act === 'save'){
     const o = edObj();
     if(!o.n){ toast('Ponle un nombre'); $('#e-n', edit).focus(); return; }
-    if(!edNH() && !marked()){ toast('Marca alguna casilla'); return; }
+    if(!edNH() && !ED.poly && !marked()){ toast('Marca alguna casilla'); return; }
     const nid = id || 'u' + Date.now().toString(36);
     ejs[nid] = Object.assign({ own: id ? !!ED.x.own : true }, o);
     saveE(); rebuild(); closeEdit(); rerender(); toast(id ? 'Guardado' : 'Ejercicio creado');
@@ -1480,6 +1604,7 @@ qIn.addEventListener('input', e=>{
 document.addEventListener('keydown', e=>{
   if(e.key === 'Enter' && e.target.matches && e.target.matches('[data-rname],.rt1,.rt2')){ e.preventDefault(); e.target.blur(); return; }
   if(S && e.code === 'Space' && !e.target.closest('input,textarea')){ e.preventDefault(); sesPause(); return; }
+  if(PP && e.code === 'Space' && !e.target.closest('input,textarea')){ e.preventDefault(); ppRun(!PP.run); return; }
   if(pl && e.code === 'Space' && !e.target.closest('input,textarea')){ e.preventDefault(); plSetRun(!pl.run); return; }
   if(e.key !== 'Escape') return;
   if(document.getElementById('ml-gh').classList.contains('open')) return;
