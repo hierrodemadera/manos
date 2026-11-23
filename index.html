@@ -360,9 +360,7 @@ const DATA = [
 { id:"calentamiento", name:"Calentamiento", desc:"mecánicos y siempre iguales: despiertan los dedos y ganan rango", color:"#26a69a", subs:[
   { name:"Olas y trinos", items:[
     ["Ola", 1, "del meñique al índice y vuelta; despierta todos los dedos", "dedos sobre la mesa, uniforme, sin acelerar", "5 4 3 2 3 4", "5 4 3 2 3 4", 80],
-    ["Trino índice-medio", 1, "alternar dos dedos vecinos lo más regular posible", "muñeca suelta, dedos cerca de la mesa", "2 3", "2 3", 100],
-    ["Trino medio-anular", 1, "el mismo trino con una pareja más torpe", "si el anular se queda atrás, baja el tempo", "3 4", "3 4", 90],
-    ["Trino anular-meñique", 2, "el trino más difícil de los tres", "que los dos golpes suenen igual de fuertes", "4 5", "4 5", 80],
+    ["Trino índice-medio", 1, "alternar dos dedos vecinos lo más regular posible", "muñeca suelta, dedos cerca de la mesa", "1 2 1 2 3 2 3 2 3 4 3 4 5 4 5 4", "1 2 1 2 3 2 3 2 3 4 3 4 5 4 5 4", 100],
   ]},
   { name:"Pulgar", items:[
     ["Oposición del pulgar", 1, "el pulgar toca la yema de cada dedo, ida y vuelta", "círculo redondo, sin aplastar", "12 13 14 15 14 13", "12 13 14 15 14 13", 70],
@@ -371,25 +369,21 @@ const DATA = [
 ]},
 { id:"independencia", name:"Independencia", desc:"que se mueva un dedo sin arrastrar a los demás", color:"#2979ff", subs:[
   { name:"Levantar", items:[
-    ["Levantar uno a uno", 1, "con la mano plana, solo se despega de la mesa el dedo marcado", "los demás no se mueven; mírate la mano", "2 3 4 5 4 3", "2 3 4 5 4 3", 40],
     ["Anular aislado", 3, "levantar el anular sin que suban el medio ni el meñique", "muy lento; si sube otro dedo, para y vuelve a empezar", "4 .", "4 .", 40],
   ]},
   { name:"Con apoyo", items:[
-    ["Pulgar quieto", 2, "el pulgar se queda apretado contra la mesa mientras los demás tocan", "que el pulgar no se levante en ningún momento", "2 3 4 5", "2 3 4 5", 60],
-    ["Parejas alternas", 2, "dos dedos a la vez, alternando parejas", "índice+anular contra medio+meñique", "24 35", "24 35", 60],
+    ["Parejas alternas", 2, "dos dedos a la vez, alternando parejas", "índice+anular contra medio+meñique", "13 24 35 24", "13 24 35 24", 60],
   ]},
 ]},
 { id:"patrones", name:"Patrones", desc:"coordinación dentro de una mano: orden, saltos y grupos", color:"#aa00ff", subs:[
   { name:"Una mano", items:[
-    ["Escalera", 1, "del pulgar al meñique y vuelta, como una escala de piano", "un dedo por pulso, sin prisa", "1 2 3 4 5 4 3 2", "1 2 3 4 5 4 3 2", 70],
     ["Patrones salteados", 2, "un dedo por pulso, saltándose el de al lado", "1-3-2-4 y luego 2-4-3-5; si te lías, baja el tempo", "1 3 2 4 2 4 3 5", "1 3 2 4 2 4 3 5", 50],
-    ["Grupos de tres", 3, "grupos de tres dedos que van avanzando", "1-2-3, 2-3-4, 3-4-5", "1 2 3 2 3 4 3 4 5", "1 2 3 2 3 4 3 4 5", 60],
     ["Saltos largos", 3, "saltos de tres dedos dentro de la mano", "1-4 y 2-5, en bucle", "1 4 2 5", "1 4 2 5", 50],
   ]},
 ]},
 { id:"disociacion", name:"Disociación", desc:"cada mano hace una cosa distinta a la vez", color:"#ff5722", subs:[
   { name:"Dos manos", items:[
-    ["Paralelo", 2, "las dos manos se mueven hacia el mismo lado", "la izquierda sube de número mientras la derecha baja", "2 3 4 5", "5 4 3 2", 50],
+    ["Paralelo", 2, "las dos manos se mueven hacia el mismo lado", "la izquierda sube de número mientras la derecha baja", "1 2 3 4 5", "5 4 3 2 1", 50],
     ["Patrón distinto", 3, "cada mano hace su patrón a la vez", "izquierda en orden, derecha salteado", "2 3 4 5", "2 4 3 5", 40],
     ["Canon", 3, "la derecha hace lo mismo que la izquierda, pero un pulso tarde", "como cantar en canon", "2 3 4 5", "5 2 3 4", 40],
   ]},
@@ -399,9 +393,6 @@ const DATA = [
   ]},
 ]},
 { id:"ritmos", name:"Ritmos", desc:"batería, hip hop, ritmos latinos y flamenco; los acentos van en rojo", color:"#ffb300", subs:[
-  { name:"Rudimentos", items:[
-    ["Paradiddle", 2, "el rudimento de batería más famoso: D I D D · I D I I", "en semicorcheas; acentúa el primer golpe de cada grupo", ". 2 . . 2! . 2 2", "2! . 2 2 . 2 . .", 60, 4, 2],
-  ]},
   { name:"Estilos", items:[
     ["Boom bap", 2, "el ritmo clásico del hip hop: bombo, caja y charles", "derecha (índice) el charles en corcheas; izquierda: pulgar el bombo, medio la caja en el 2 y el 4", "1 . 3! . 1 1 3! .", "2 2 2 2 2 2 2 2", 85, 2, 4],
     ["Clave 3-2", 3, "la clave de son: tres golpes en un compás y dos en el siguiente", "la izquierda marca los pulsos con el pulgar; la derecha toca la clave", "1 . 1 . 1 . 1 . 1 . 1 . 1 . 1 .", "2 . . 2 . . 2 . . . 2 . 2 . . .", 80, 2, 4],
@@ -425,13 +416,6 @@ const DATA = [
     ["Garra contra el pulgar", 2, "tocar lo más rápido posible la falange del pulgar, alternando índice y medio", "postura: mano en símbolo de paz y luego garra con el índice y el medio", ".", ".", 100],
     ["Plegar a la base del pulgar · a la vez", 1, "con los dedos extendidos (símbolo de paz), pliega índice y medio a la vez hasta tocar el metacarpiano del pulgar", "sin hacer garra: aquí las yemas no tocan el pulgar", ".", ".", 90],
     ["Plegar a la base del pulgar · alternando", 2, "lo mismo, pero alternando índice y medio", "sin hacer garra: aquí las yemas no tocan el pulgar", ".", ".", 90],
-  ]},
-]},
-{ id:"velocidad", name:"Velocidad", desc:"golpes cortos y rápidos, con descanso para soltar la tensión", color:"#e91e63", subs:[
-  { name:"Ráfagas", items:[
-    ["Ráfaga de trino", 2, "cuatro golpes rápidos y descanso", "rápido pero suelto; el descanso es para relajar", "2 3 2 3 . . . .", "2 3 2 3 . . . .", 60, 4, 2],
-    ["Doble toque", 2, "dos golpes muy seguidos con dedos distintos", "como dos botones casi a la vez en el mando", "2 3 . .", "2 3 . .", 60, 4, 1],
-    ["Pulgar a dos puntos", 3, "el pulgar salta entre dos marcas de la mesa", "no se arrastra: salta, como de un botón a otro", "1 .", "1 .", 100],
   ]},
 ]},
 ];
@@ -487,14 +471,18 @@ const ROUTINES_SEED = {
   d2: { name: "Cola de difíciles", color: "#aa00ff", note: "Lista de espera, en orden. No hace falta entrenarla: de aquí sale el siguiente difícil.", o: 1, items: [
     "Patrones salteados","Patrón distinto","Anular aislado","Polirritmo 3 contra 2",
   ]},
-  d4: { name: "Mando", color: "#607d8b", note: "Resistencia y velocidad para la mano del mando. Para los días que toque mando.", o: 3, items: MANDO_ITEMS },
-  d3: { name: "Velocidad", color: "#e91e63", note: "Unos 5 min. Para los días con más ganas o antes de jugar.", o: 2, items: [
-    H1("Trinos · 2 min"),
-    "Trino medio-anular","Trino anular-meñique",
-    H1("Ráfagas · 3 min"),
-    "Ráfaga de trino","Doble toque","Pulgar a dos puntos",
-  ]},
+  d4: { name: "Mando", color: "#607d8b", note: "Resistencia y velocidad para la mano del mando. Para los días que toque mando.", o: 2, items: MANDO_ITEMS },
 };
+/* La rutina «Velocidad» ya no existe: si sigue en los datos guardados (aquí o en GitHub), se quita. */
+const dropOld = rs=>{ if(rs && rs.d3 && rs.d3.name === 'Velocidad'){ delete rs.d3; return true; } return false; };
+
+// ── SONIDO DE CADA DEDO ──
+// Notas: escala pentatónica (do re mi sol la), una octava por mano, de grave (meñique izquierdo) a agudo (meñique derecho).
+// Batería: la izquierda lleva los tambores y la derecha los platos.
+const NOTES = { L: { 5: ['do', 261.63], 4: ['re', 293.66], 3: ['mi', 329.63], 2: ['sol', 392.00], 1: ['la', 440.00] },
+                R: { 1: ['do', 523.25], 2: ['re', 587.33], 3: ['mi', 659.25], 4: ['sol', 783.99], 5: ['la', 880.00] } };
+const DRUMS = { L: { 1: 'bombo', 2: 'tom alto', 3: 'caja', 4: 'tom medio', 5: 'tom base' },
+                R: { 1: 'charles abierto', 2: 'charles cerrado', 3: 'ride', 4: 'campana del ride', 5: 'crash' } };
 const ROUTINE_TEMPLATE = [H1("Calentamiento · 3 min"), H1("Difícil · 5 min"), H1("Mantenimiento · 2 min")];
 
 // ── QUÉ HACE CADA DEDO (portada de Manos) ──
@@ -535,7 +523,7 @@ const normItem = x=> typeof x === 'string' ? x : x && x.h === 1 ? { h: 1, t: Str
 const normR = r=> ({ name: String(r && r.name || ''), color: String(r && r.color || '#bdbdbd'), items: Array.isArray(r && r.items) ? r.items.map(normItem).filter(x=> x !== null) : [], note: String(r && r.note || ''), o: +(r && r.o) || 0 });
 let routines = load(RK, null);
 if(!routines){ routines = {}; Object.entries(ROUTINES_SEED).forEach(([id, r])=> routines[id] = normR(r)); put(RK, routines); try{ localStorage.setItem('dd_seed_mando', '1'); }catch(e){} }
-else Object.keys(routines).forEach(id=> routines[id] = normR(routines[id]));
+else { Object.keys(routines).forEach(id=> routines[id] = normR(routines[id])); if(dropOld(routines)) put(RK, routines); }
 { let done = '1'; try{ done = localStorage.getItem('dd_seed_mando'); }catch(e){}
   if(!done){ if(!routines.d4 && !Object.values(routines).some(r=> r.name === 'Mando')){ const mx = Math.max(-1, ...Object.values(routines).map(r=> +r.o || 0)); routines.d4 = { name: 'Mando', color: '#607d8b', items: MANDO_ITEMS, note: ROUTINES_SEED.d4.note, o: mx + 1 }; put(RK, routines); }
     try{ localStorage.setItem('dd_seed_mando', '1'); }catch(e){} } }
@@ -665,7 +653,7 @@ function renderManos(){
   while(days.has(dkey(d))){ st++; d.setDate(d.getDate() - 1); }
   const nSes = Object.keys(logs).length;
   body.innerHTML = `<div class="page"><div class="lh">Manos<small>${nSes} ${nSes === 1 ? 'sesión' : 'sesiones'}</small></div>
-    <div class="padbox"><div class="padwrap" id="padm">${HANDS}</div><div class="padinfo" id="padinfo"><b>Tus manos</b><span>Toca un dedo para ver cómo es. Para ver un ejercicio en las manos, pulsa ▶ en su ficha.</span></div></div>
+    <div class="padbox"><div class="padwrap" id="padm">${HANDS}</div><div class="padinfo" id="padinfo"><b>Tus manos</b><span>Toca un dedo para ver cómo es y oír cómo suena. Para ver un ejercicio en las manos, pulsa ▶ en su ficha.</span></div><div class="chips" style="justify-content:center;padding:8px 0 0">${sndChips('Sin sonido')}</div></div>
     <div class="list"><div class="days">${strip}</div><div class="streak">${st ? 'Racha de ' + st + (st === 1 ? ' día' : ' días') + (days.has(t) ? ' · hoy hecho' : '') : 'Sin racha todavía. Empieza una rutina en Rutinas.'}</div></div></div>`;
   $('#padm svg').classList.add('tap');
 }
@@ -673,7 +661,9 @@ function fingerInfo(f){
   const svg = $('#padm svg'); if(!svg) return;
   const i = +f[1];
   svg.querySelectorAll('.k').forEach(k=> k.classList.toggle('sel', +k.dataset.f[1] === i));
-  $('#padinfo').innerHTML = `<b>${esc(FINFO[i][0])} · dedo ${i}</b><span>${esc(FINFO[i][1])}</span>`;
+  const h = f[0], hn = h === 'L' ? 'izquierda' : 'derecha';
+  $('#padinfo').innerHTML = `<b>${esc(FINFO[i][0])} · dedo ${i}</b><span>${esc(FINFO[i][1])}</span><span>Suena (mano ${hn}): ${esc(DRUMS[h][i])} en batería · ${esc(NOTES[h][i][0])} en notas.</span>`;
+  audio(); playStep({ L: h === 'L' ? [i] : [], R: h === 'R' ? [i] : [] }, now());
 }
 
 /* --- filtros y fichas --- */
@@ -701,34 +691,37 @@ function openPlay(a){
   play.innerHTML = `<div class="pk" role="dialog"><div class="pkh"><span>${esc(name)}</span><button data-plx="1">Cerrar</button></div><div class="padwrap">${HANDS}</div>
     <div class="plcap"></div><div class="plkeys"></div><div class="pldots">${st.map((_, i)=> `<i data-i="${i}"${i && i % (x.sub || 1) === 0 && (x.sub || 1) > 1 ? ' style="margin-left:8px"' : ''}></i>`).join('')}</div>
     <div class="plctl"><button data-pl="prev" aria-label="Paso anterior">‹</button><button data-pl="toggle" class="pltog" aria-label="Pausa">❚❚</button><button data-pl="next" aria-label="Paso siguiente">›</button><span class="sep"></span>${[1, .5, .25].map(s=> `<button class="chip${s === 1 ? ' on' : ''}" data-spd="${s}">${s === 1 ? '1×' : s === .5 ? '½×' : '¼×'}</button>`).join('')}</div>
+    <div class="chips" style="justify-content:center;padding:6px 12px 0">${sndChips('Sin sonido')}</div>
     <div class="chips" style="justify-content:center;padding:6px 12px 0"><button class="chip plink" data-plink="1">♩ Con el metrónomo</button></div>
     <div class="plhint">1× = ${bpm} bpm${(x.sub || 1) > 1 ? ' en ' + SUBS[x.sub] : ''}, tu tempo · manos sobre la mesa, vistas desde arriba</div></div>`;
   play.classList.add('open');
-  pl = { steps: st, i: -1, spd: 1, run: true, t: 0, ms: 60000 / bpm / (x.sub || 1), svg: $('svg', play), x };
-  plNext();
+  pl = { steps: st, i: -1, spd: 1, run: false, t: 0, q: [], k: 0, nt: 0, ms: 60000 / bpm / (x.sub || 1), svg: $('svg', play), x };
+  audio(); plSetRun(true);
 }
-function plShow(i){
+function plShow(i, sound){
   pl.i = i; const st = pl.steps[i];
+  if(sound){ audio(); playStep(st, now()); }
   paint(pl.svg, st);
   const c = capOf(st); $('.plcap', play).innerHTML = c[0]; $('.plkeys', play).innerHTML = c[1] || ' ';
   play.querySelectorAll('.pldots i').forEach((d, k)=> d.classList.toggle('on', k === i));
 }
-function plNext(){ if(!pl) return; clearTimeout(pl.t); plShow((pl.i + 1) % pl.steps.length); if(pl.run) pl.t = setTimeout(plNext, pl.ms / pl.spd); }
-function plSetRun(r){ pl.run = r; $('.pltog', play).textContent = r ? '❚❚' : '▶'; clearTimeout(pl.t); if(r) pl.t = setTimeout(plNext, pl.ms / pl.spd); else plShow(pl.i); }
-function closePlay(){ if(!play.classList.contains('open')) return; MT.linked = false; if(pl) clearTimeout(pl.t); pl = null; play.classList.remove('open'); play.innerHTML = ''; }
+/* el reproductor va con el reloj del audio: el sonido se programa por adelantado y el dibujo lo sigue */
+function plSetRun(r){ pl.run = r; $('.pltog', play).textContent = r ? '❚❚' : '▶'; pl.q = []; if(r){ pl.k = (pl.i + 1) % pl.steps.length; pl.nt = now() + .06; } else if(pl.i >= 0) plShow(pl.i); }
+function closePlay(){ if(!play.classList.contains('open')) return; MT.linked = false; pl = null; play.classList.remove('open'); play.innerHTML = ''; audioIdle(); }
 play.addEventListener('click', e=>{
   if(e.target === play || e.target.closest('[data-plx]')){ closePlay(); return; }
   if(!pl) return;
+  const sd = e.target.closest('[data-snd]'); if(sd){ setSnd(sd.dataset.snd); if(!pl.run && !MT.linked && pl.i >= 0) plShow(pl.i, true); return; }
   if(e.target.closest('[data-plink]')){ if(MT.linked){ MT.linked = false; mStop(); plSetRun(false); } else linkPlayer(); return; }
   const b = e.target.closest('[data-pl]'), s = e.target.closest('[data-spd]'), dot = e.target.closest('.pldots i');
   if(MT.linked && (b || s || dot)){ MT.linked = false; $('.plink', play).classList.remove('on'); if(b && b.dataset.pl === 'toggle'){ mStop(); plSetRun(false); return; } }
-  if(s){ pl.spd = +s.dataset.spd; play.querySelectorAll('[data-spd]').forEach(c=> c.classList.toggle('on', c === s)); if(pl.run){ clearTimeout(pl.t); pl.t = setTimeout(plNext, pl.ms / pl.spd); } return; }
-  if(dot){ plSetRun(false); plShow(+dot.dataset.i); return; }
+  if(s){ pl.spd = +s.dataset.spd; play.querySelectorAll('[data-spd]').forEach(c=> c.classList.toggle('on', c === s)); return; }
+  if(dot){ plSetRun(false); plShow(+dot.dataset.i, true); return; }
   if(!b) return;
   const a = b.dataset.pl, n = pl.steps.length;
   if(a === 'toggle'){ plSetRun(!pl.run); return; }
   plSetRun(false);
-  plShow(a === 'next' ? (pl.i + 1) % n : (pl.i - 1 + n) % n);
+  plShow(a === 'next' ? (pl.i + 1) % n : (pl.i - 1 + n) % n, true);
 });
 
 /* --- sesión: recorre una rutina con metrónomo, temporizador y las manos --- */
@@ -749,10 +742,60 @@ document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState 
 const now = ()=> ac ? ac.currentTime : performance.now() / 1000;
 function click(t, acc){
   if(!ac || muted) return;
-  const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = acc ? 1500 : 950;
-  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(acc ? .6 : .32, t + .002); g.gain.exponentialRampToValueAtTime(.0001, t + .05);
+  const o = ac.createOscillator(), g = ac.createGain(), k = fsnd === 'no' ? 1 : .5; o.frequency.value = acc ? 1500 : 950;
+  g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime((acc ? .6 : .32) * k, t + .002); g.gain.exponentialRampToValueAtTime(.0001, t + .05);
   o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + .07);
 }
+/* --- sonido de cada dedo: notas o batería (todo sintetizado, sin archivos) --- */
+let fsnd = 'bateria'; try{ const v = localStorage.getItem('dd_snd'); if(v === 'notas' || v === 'bateria' || v === 'no') fsnd = v; }catch(e){}
+function setSnd(v){ fsnd = v; try{ localStorage.setItem('dd_snd', v); }catch(e){} document.querySelectorAll('[data-snd]').forEach(b=> b.classList.toggle('on', b.dataset.snd === v)); }
+const sndChips = off=> [['notas', '♪ Notas'], ['bateria', 'Batería'], ['no', off]].map(([k, n])=> `<button class="chip${fsnd === k ? ' on' : ''}" data-snd="${k}">${n}</button>`).join('');
+let aBus = null, aNoiseBuf = null;
+function aOut(){
+  if(aBus) return aBus;
+  const c = ac.createDynamicsCompressor(); c.threshold.value = -12; c.knee.value = 6; c.ratio.value = 4; c.attack.value = .002; c.release.value = .12;
+  aBus = ac.createGain(); aBus.gain.value = .9; aBus.connect(c); c.connect(ac.destination);
+  const n = ac.sampleRate, b = ac.createBuffer(1, n, n), d = b.getChannelData(0); for(let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1; aNoiseBuf = b;
+  return aBus;
+}
+const aGain = dest=>{ const g = ac.createGain(); g.connect(dest); return g; };
+function aEnv(g, t, peak, dec, att){ g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(Math.max(.0002, peak), t + (att || .003)); g.gain.exponentialRampToValueAtTime(.0001, t + dec); }
+function aOsc(type, f, t, dur, dest){ const o = ac.createOscillator(); o.type = type; o.frequency.setValueAtTime(f, t); o.connect(dest); o.start(t); o.stop(t + dur + .05); return o; }
+function aNoise(t, dur, dest){ const s = ac.createBufferSource(); s.buffer = aNoiseBuf; s.connect(dest); s.start(t, Math.random() * .4); s.stop(t + dur + .05); }
+function aFilt(type, f, q, dest){ const b = ac.createBiquadFilter(); b.type = type; b.frequency.value = f; if(q) b.Q.value = q; b.connect(dest); return b; }
+/* nota tipo marimba */
+function aNote(f, t, v){
+  const o = aOut(), g = aGain(o); aEnv(g, t, .4 * v, .9, .004); aOsc('triangle', f, t, .9, g);
+  const g2 = aGain(o); aEnv(g2, t, .1 * v, .1, .002); aOsc('sine', f * 4, t, .1, g2);
+}
+/* platos: seis cuadradas desafinadas entre sí, filtradas por arriba */
+const METAL = [205.3, 304.4, 369.6, 522.7, 540, 800];
+function aMetal(t, dur, v, hp, dest){ const g = aGain(dest), h = aFilt('highpass', hp, 0, g); aEnv(g, t, v, dur, .002); METAL.forEach(f=> aOsc('square', f * 1.7, t, dur, h)); }
+function aDrum(name, t, v){
+  const o = aOut();
+  if(name === 'bombo'){ const g = aGain(o); aEnv(g, t, v, .45); const x = aOsc('sine', 150, t, .45, g); x.frequency.exponentialRampToValueAtTime(42, t + .14); const c = aGain(o); aEnv(c, t, .25 * v, .02, .001); aNoise(t, .02, aFilt('lowpass', 1500, 0, c)); }
+  else if(name === 'caja'){ const g = aGain(o); aEnv(g, t, .55 * v, .2); aNoise(t, .2, aFilt('highpass', 1200, 0, g)); const b = aGain(o); aEnv(b, t, .45 * v, .1); const x = aOsc('triangle', 220, t, .1, b); x.frequency.exponentialRampToValueAtTime(160, t + .08); }
+  else if(name.indexOf('tom') === 0){ const f = name === 'tom alto' ? 240 : name === 'tom medio' ? 170 : 115, g = aGain(o); aEnv(g, t, .8 * v, .5); const x = aOsc('sine', f, t, .5, g); x.frequency.exponentialRampToValueAtTime(f * .62, t + .35); const c = aGain(o); aEnv(c, t, .12 * v, .03, .001); aNoise(t, .03, aFilt('bandpass', 3000, .8, c)); }
+  else if(name === 'charles cerrado'){ const g = aGain(o); aEnv(g, t, .35 * v, .05, .001); aNoise(t, .05, aFilt('highpass', 7500, 0, g)); aMetal(t, .05, .12 * v, 7000, o); }
+  else if(name === 'charles abierto'){ const g = aGain(o); aEnv(g, t, .3 * v, .38, .001); aNoise(t, .38, aFilt('highpass', 7000, 0, g)); aMetal(t, .38, .12 * v, 7000, o); }
+  else if(name === 'ride'){ aMetal(t, 1.1, .2 * v, 5000, o); const g = aGain(o); aEnv(g, t, .08 * v, .5, .001); aNoise(t, .5, aFilt('highpass', 9000, 0, g)); }
+  else if(name === 'campana del ride'){ const g = aGain(o); aEnv(g, t, .28 * v, .9, .001); aOsc('square', 740, t, .9, aFilt('bandpass', 2400, 2, g)); aOsc('triangle', 1110, t, .9, g); }
+  else if(name === 'crash'){ const g = aGain(o); aEnv(g, t, .4 * v, 1.6, .002); aNoise(t, 1.6, aFilt('highpass', 4500, 0, g)); aMetal(t, 1.4, .18 * v, 4000, o); }
+}
+/* suena un paso: 1-5 golpe normal, 11-15 acento (más fuerte) */
+function playStep(st, t){
+  if(!ac || muted || fsnd === 'no' || !st) return;
+  t = Math.max(t, ac.currentTime);
+  ['L', 'R'].forEach(h=> (st[h] || []).forEach(v=>{ const f = v % 10, a = v > 10 ? 1 : .55; if(fsnd === 'notas') aNote(NOTES[h][f][1], t, a); else aDrum(DRUMS[h][f], t, a); }));
+}
+/* reloj del reproductor */
+setInterval(()=>{
+  if(!pl || !pl.run || MT.linked) return;
+  const n = pl.steps.length, dur = pl.ms / 1000 / pl.spd;
+  if(pl.nt < now() - .25) pl.nt = now() + .05;
+  while(pl.nt < now() + .12){ playStep(pl.steps[pl.k], pl.nt); pl.q.push({ t: pl.nt, i: pl.k }); pl.k = (pl.k + 1) % n; pl.nt += dur; }
+}, 25);
+(function plFrame(){ requestAnimationFrame(plFrame); if(!pl || !pl.q.length) return; const n = now(); let v = null; while(pl.q.length && pl.q[0].t <= n) v = pl.q.shift(); if(v) plShow(v.i); })();
 async function wake(on){ try{ if(on && navigator.wakeLock && !lock){ lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', ()=> lock = null); } else if(!on && lock){ await lock.release(); lock = null; } }catch(e){} }
 document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState === 'visible' && S && S.phase !== 'done') wake(true); });
 function sesItems(r){
@@ -779,7 +822,7 @@ function sesHTML(){
     <div class="srate" id="srate"><p>¿Cómo ha salido?</p><div class="chips"><button class="chip" data-rate="-1">Con fallos · −5</button><button class="chip" data-rate="0">Bien</button><button class="chip" data-rate="1">Limpio · +5</button></div>
       <div class="chips"><button class="chip${isDone(it.x.id) ? ' on' : ''}" data-sck="1">✓ Ya lo tengo automatizado</button></div></div>
     <div class="pldots">${S.items.map((x, k)=> `<i class="${k === S.i ? 'on' : S.done[k] != null ? 'ok' : ''}"></i>`).join('')}</div>
-    <div class="plhint"><button class="chip" data-s="mute">${muted ? '♪ sin sonido' : '♪ con sonido'}</button></div>`;
+    <div class="chips" style="justify-content:center;padding:6px 12px 0">${it.x.f.nohands ? '' : sndChips('Solo clic')}<button class="chip" data-s="mute">${muted ? 'sin sonido' : 'con sonido'}</button></div>`;
 }
 function startEx(){
   const sb = $('#sbody', ses); sb.innerHTML = sesHTML();
@@ -793,6 +836,7 @@ setInterval(()=>{
   while(nextT < now() + .12){
     if(kb < ci){ click(nextT, kb === 0); vq.push({ t: nextT, k: kb }); kb++; nextT += spb; continue; }
     const st = kb - ci; if(st % sub === 0) click(nextT, (st / sub) % bt === 0);
+    playStep(S.st[st % S.st.length], nextT);
     vq.push({ t: nextT, k: kb }); kb++; nextT += spb / sub;
   }
 }, 25);
@@ -826,6 +870,7 @@ function sesFinish(){
 function closeSes(){ S = null; vq = []; wake(false); audioIdle(); ses.classList.remove('open'); ses.innerHTML = ''; rerender(); }
 ses.addEventListener('click', e=>{
   if(!S) return;
+  const sd = e.target.closest('[data-snd]'); if(sd){ setSnd(sd.dataset.snd); return; }
   if(e.target.closest('[data-sx]')){ if(S.phase === 'done' || !Object.keys(S.done).length) closeSes(); else sesFinish(); return; }
   const s = e.target.closest('[data-s]'), r = e.target.closest('[data-rate]');
   if(e.target.closest('[data-sck]')){ const on = toggle(S.items[S.i].x.id); e.target.closest('[data-sck]').classList.toggle('on', on); toast(on ? 'Automatizado' : 'Desmarcado'); return; }
@@ -836,7 +881,7 @@ ses.addEventListener('click', e=>{
   if(a === 'next') toRate();
   if(a === 'prev'){ if(S.i > 0) S.i--; audio(); startEx(); }
   if(a === 'dn' || a === 'up'){ $('#bv', ses).textContent = setBpm(x, bpmOf(x) + (a === 'up' ? 5 : -5)); }
-  if(a === 'mute'){ muted = !muted; s.textContent = muted ? '♪ sin sonido' : '♪ con sonido'; }
+  if(a === 'mute'){ muted = !muted; s.textContent = muted ? 'sin sonido' : 'con sonido'; }
 });
 
 /* --- editor de ejercicios: tu tabla (columnas = dedos, filas = pulsos) --- */
@@ -986,6 +1031,7 @@ setInterval(()=>{
     const sub = M.sub, k = MT.tick % sub, beat = Math.floor(MT.tick / sub) % M.beats, bar = Math.floor(MT.tick / (sub * M.beats));
     const muted = M.gap.on && bar % (M.gap.play + M.gap.mute) >= M.gap.play;
     if(!muted) mSound(MT.next, k === 0 ? M.acc[beat] : 'sub');
+    if(!muted && MT.linked && pl) playStep(pl.steps[MT.tick % pl.steps.length], MT.next);
     MT.q.push({ t: MT.next, tick: MT.tick, beat, k, muted });
     MT.next += stepDur(k); MT.tick++;
     if(MT.tick % (sub * M.beats) === 0 && M.trn.on){ const bars = MT.tick / (sub * M.beats); if(bars % Math.max(1, M.trn.every) === 0 && M.bpm < M.trn.to){ M.bpm = Math.min(M.trn.to, M.bpm + Math.max(1, M.trn.add)); mSave(); MT.dirtyBpm = true; } }
@@ -1255,7 +1301,7 @@ $('#imp').addEventListener('change', e=>{
       if(!o || o.format !== 'dedos-datos' || !isMap(o.checks)) throw 0;
       if(!confirm('¿Juntar esta copia con lo que ya tienes?\n\nNo se borra nada: se añade lo de la copia que no tengas.')) return;
       Object.entries(o.checks).forEach(([n, t])=>{ if(!isDone(n)) checks[n] = t || new Date().toISOString(); });
-      if(isMap(o.routines)){ snapR(); Object.entries(o.routines).forEach(([id, rr])=>{ if(!routines[id]) routines[id] = normR(rr); }); saveR(); }
+      if(isMap(o.routines)){ snapR(); Object.entries(o.routines).forEach(([id, rr])=>{ if(!routines[id]) routines[id] = normR(rr); }); dropOld(routines); saveR(); }
       if(isMap(o.tempos)){ Object.assign(tempos, o.tempos); saveT(); }
       if(isMap(o.logs)){ Object.assign(logs, o.logs); saveLog(); }
       if(isMap(o.metPresets)){ Object.entries(o.metPresets).forEach(([id, v])=>{ if(!mPresets[id]) mPresets[id] = v; }); savePresets(); }
@@ -1281,6 +1327,7 @@ document.addEventListener('click', e=>{
   if(t.closest('[data-all]')){ go({ t: 'all' }); return; }
   const nw = t.closest('[data-new]'); if(nw){ openEdit(null, nw.dataset.new); return; }
   const fk = t.closest('#padm [data-f]'); if(fk){ fingerInfo(fk.dataset.f); return; }
+  const sd = t.closest('[data-snd]'); if(sd){ setSnd(sd.dataset.snd); return; }
   const tb = t.closest('[data-tab]'); if(tb){ if(cur().t === 'search'){ q = ''; qIn.value = ''; } if(!(cur().t === 'root' && ty() === tb.dataset.tab)) go({ t: 'root', ty: tb.dataset.tab }); return; }
   if(t.closest('[data-pend]')){ filt.pend = !filt.pend; rerender(); return; }
   if(t.closest('[data-undo]')){ if(undoSt.length){ routines = JSON.parse(undoSt.pop()); saveR(); rerender(); toast('Deshecho'); } return; }
@@ -1331,6 +1378,7 @@ document.addEventListener('keydown', e=>{
 });
 window.ddApply = function(m){
   checks = m.c || {}; tempos = m.t || {}; logs = m.g || {}; ejs = m.x || {}; put('dd_ejs', ejs); mPresets = m.p || {}; put('dd_metp', mPresets); if(met.classList.contains('open')) mRender(); rebuild(); routines = {}; Object.entries(m.r || {}).forEach(([id, r])=> routines[id] = normR(r));
+  if(dropOld(routines)) setTimeout(dirty, 50);
   put(CK, checks); put(RK, routines); put(TK, tempos); put(GK, logs);
   const a = document.activeElement; if(a && a.matches && a.matches('[data-rname],[data-rnote],[data-hed],#pkq')) return;
   if(pick.classList.contains('open')) drawPick(); if(!S) rerender();
