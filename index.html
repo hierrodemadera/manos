@@ -147,6 +147,13 @@ svg{display:block;}
 .pfc{display:flex;flex-direction:column;align-items:center;gap:2px;border-radius:12px;background:var(--h);padding:6px 2px;}
 .pfc b{font-size:12px;filter:brightness(.85);}
 .pfc.off{opacity:.45;}
+.pfc{cursor:pointer;}
+.pfc.sel{box-shadow:inset 0 0 0 2px var(--fc);opacity:1;}
+.pft{font-size:10.5px;opacity:.55;min-height:13px;}
+.pgp{fill:var(--solid);stroke:currentColor;stroke-opacity:.35;stroke-width:1.2;}
+.pgl{fill:currentColor;opacity:.45;font-size:9px;text-anchor:middle;dominant-baseline:central;}
+.pgh{fill:transparent;cursor:pointer;}
+.pgh:hover{fill:currentColor;fill-opacity:.08;}
 .pfn{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1;}
 .pfb{display:flex;gap:4px;}
 .pfb button{width:32px;height:32px;border-radius:9px;background:var(--solid);font-weight:700;font-size:16px;}
@@ -431,6 +438,8 @@ const DATA = [
     ["Polígonos 3:2", 3, "índice 2 golpes y medio 3 en cada vuelta: una línea contra un triángulo", "las dos manos igual. Mira la aguja: cada vértice que toca es un golpe de ese dedo", ".", ".", 60, 1, 2, "0 2 3 0 0"],
     ["Polígonos 4:3:2", 4, "índice 2, medio 3 y anular 4 en cada vuelta: línea, triángulo y cuadrado", "las dos manos igual. Empieza a ¼× y apaga dedos (−) hasta que salga; luego añádelos", ".", ".", 50, 1, 4, "0 2 3 4 0"],
     ["Polígonos 5:4:3:2", 4, "el del vídeo: índice 2, medio 3, anular 4 y meñique 5 en cada vuelta", "las dos manos igual. Cada dedo va a su ritmo y todos coinciden solo al empezar la vuelta", ".", ".", 40, 1, 4, "0 2 3 4 5"],
+    ["Clave de rumba", 3, "la clave de rumba 3-2 hecha polígono: 5 golpes en un círculo de 16; el pulgar marca los 4 pulsos", "índice la clave, pulgar los pulsos. Mira la forma: es un pentágono torcido, no regular", ".", ".", 80, 1, 4, "4 p0.3.7.10.12 0 0 0|16"],
+    ["Clave de son", 3, "la clave de son 3-2: casi igual que la de rumba, pero el tercer golpe llega un punto antes", "índice la clave, pulgar los pulsos. Compárala con la de rumba en el círculo", ".", ".", 80, 1, 4, "4 p0.3.6.10.12 0 0 0|16"],
     ["Polígonos de cinco dedos", 4, "cada dedo da tantos golpes como su número: pulgar 1, índice 2, medio 3, anular 4 y meñique 5", "las dos manos igual. El pulgar marca el inicio de cada vuelta; los demás se reparten por encima", ".", ".", 40, 1, 4, "1 2 3 4 5"],
   ]},
   { name:"Polirritmos en una mano", items:[
@@ -580,8 +589,18 @@ function saveE(){ put('dd_ejs', ejs); dirty(); }
 /* ejs: { id: ejercicio propio, o cambios a uno de ejemplo, o {del:1} si se ha borrado } */
 const SUBS = { 1: 'negras', 2: 'corcheas', 3: 'tresillos', 4: 'semicorcheas', 6: 'seisillos', 8: 'fusas' };
 /* polirritmo: golpes por vuelta de cada dedo, del pulgar al meñique (0 = apagado), p. ej. "0 2 3 4 5" */
-const polyStr = v=>{ const a = String(v || '').trim().split(/\s+/).map(Number); return a.length === 5 && a.every(n=> Number.isInteger(n) && n >= 0 && n <= 9) && a.some(n=> n > 0) ? a.join(' ') : ''; };
-const polyArr = x=> x.poly.split(' ').map(Number);
+/* cada dedo: un número (polígono regular de n golpes) o una lista de puntos del círculo ("p0.3.7.10.12").
+   Si algún dedo usa puntos, al final va "|16": cuántos puntos tiene el círculo */
+const polyParse = v=>{ const [t, g] = String(v || '').split('|'), G = clamp(Math.round(+g) || 16, 2, 48);
+  return { G, cs: t.trim().split(/\s+/).map(k=> k[0] === 'p' ? [...new Set(k.slice(1).split('.').filter(Boolean).map(Number).filter(n=> Number.isInteger(n) && n >= 0 && n < G))].sort((a, b)=> a - b) : +k) }; };
+const pCount = v=> typeof v === 'number' ? v : v.length;
+const isPts = v=> typeof v !== 'number';
+const polySer = (cs, G)=> cs.map(v=> isPts(v) ? 'p' + v.join('.') : v).join(' ') + (cs.some(isPts) ? '|' + G : '');
+const polyStr = v=>{ const raw = String(v || '').trim(); if(!raw) return ''; const t = raw.split('|')[0].trim().split(/\s+/);
+  if(t.length !== 5 || !t.every(k=> /^\d$/.test(k) || /^p[\d.]*$/.test(k))) return ''; const o = polyParse(raw); return o.cs.some(v=> pCount(v) > 0) ? polySer(o.cs, o.G) : ''; };
+const polyArr = x=> polyParse(x.poly).cs;
+const polyG = x=> polyParse(x.poly).G;
+const pFr = (v, G)=> isPts(v) ? v.map(i=> i / G) : Array.from({ length: v }, (_, k)=> k / v);
 /* tramos: líneas entre filas. Cada número es la fila donde empieza un tramo nuevo, p. ej. "4 8" */
 const cutStr = v=> [...new Set(String(v || '').trim().split(/\s+/).map(Number).filter(n=> Number.isInteger(n) && n > 0))].sort((a, b)=> a - b).join(' ');
 const cutsOf = x=> x && x.cuts ? x.cuts.split(' ').map(Number) : [];
@@ -592,7 +611,7 @@ const trOf = (x, n)=>{ const k = +trSel[x.id] || 0, t = tramos(x, n); return k >
 function setTr(x, k){ if(!x.id) return; if(k) trSel[x.id] = k; else delete trSel[x.id]; put('dd_tramo', trSel); }
 const trChips = (x, n, cur)=>{ const t = tramos(x, n); if(t.length < 2) return ''; return `<div class="chips trc" style="justify-content:center;padding:6px 12px 0"><span class="rcount">tramo</span><button class="chip${cur ? '' : ' on'}" data-tr="0">Todo</button>${t.map((r, k)=> `<button class="chip${cur === k + 1 ? ' on' : ''}" data-tr="${k + 1}" title="pasos ${r[0] + 1}–${r[1]}">${k + 1}</button>`).join('')}</div>`; };
 const FCOL = { 1: '#ff2d55', 2: '#34c759', 3: '#0a84ff', 4: '#ff9500', 5: '#af52de' };
-const polyText = x=> polyArr(x).map((n, i)=> n ? FN[i + 1] + ' ' + n : '').filter(Boolean).join(' · ');
+const polyText = x=> polyArr(x).map((v, i)=> pCount(v) ? FN[i + 1] + ' ' + pCount(v) : '').filter(Boolean).join(' · ');
 const normE = o=> ({ n: String(o.n || 'Sin nombre'), l: clamp(+o.l || 1, 1, 4), d: String(o.d || ''), h: String(o.h || ''), L: String(o.L || '.'), R: String(o.R || '.'), bpm0: clamp(+o.bpm0 || 60, 20, 300), sub: SUBS[+o.sub] ? +o.sub : 1, beats: clamp(+o.beats || 4, 1, 12), poly: polyStr(o.poly), cuts: cutStr(o.cuts) });
 function rebuild(){
   ALL = [];
@@ -742,7 +761,7 @@ function card(x, showFam, ri){
   const line = (tags, txt, html)=> `<span class="sb2"><i>${tags}</i><span>${html ? txt : esc(txt)}</span></span>`;
   sb += line('<b class="am">Cómo</b>', x.h);
   const nh = !!x.f.nohands;
-  if(x.poly) sb += line('<b class="po">POLI</b>', polyArr(x).map((n, i)=> n ? `<b style="color:${FCOL[i + 1]};filter:brightness(.8)">${esc(FN[i + 1])} ${n}</b>` : '').filter(Boolean).join(' · ') + ` <span style="opacity:.6">por vuelta de ${x.beats || 4} pulsos</span>`, true);
+  if(x.poly) sb += line('<b class="po">POLI</b>', polyArr(x).map((v, i)=> pCount(v) ? `<b style="color:${FCOL[i + 1]};filter:brightness(.8)">${esc(FN[i + 1])} ${pCount(v)}${isPts(v) ? '*' : ''}</b>` : '').filter(Boolean).join(' · ') + ` <span style="opacity:.6">por vuelta de ${x.beats || 4} pulsos${polyArr(x).some(isPts) ? ' · * puntos en un círculo de ' + polyG(x) : ''}</span>`, true);
   else if(!nh) sb += line(isSym(x) ? '<b class="iz">SIM</b>' : '<b class="de">ASIM</b>', notation(x), true);
   const nb = (nh ? 4 : 5) + (inR && ri > 0 ? 1 : 0), fv = isFav(x.id);
   const acts = `${nh ? '' : '<button class="pl" data-play="1" title="Ver en las manos" aria-label="Ver en las manos">▶</button>'}<button data-edit="1" title="Editar" aria-label="Editar">✎</button><button class="${d ? 'on' : ''}" data-ck="1" title="Marcar automatizado" aria-label="Marcar automatizado">✓</button><button class="fav${fv ? ' on' : ''}" data-fav="1" title="${fv ? 'Quitar de favoritos' : 'Añadir a favoritos'}" aria-label="${fv ? 'Quitar de favoritos' : 'Añadir a favoritos'}">${fv ? '★' : '☆'}</button>` + (inR ? `<button data-rm="${ri}" title="Quitar de la rutina" aria-label="Quitar de la rutina">×</button>${ri > 0 ? `<button data-up="${ri}" title="Subir" aria-label="Subir">↑</button>` : ''}` : `<button data-add="1" title="Añadir a una rutina" aria-label="Añadir a una rutina">+</button>`);
@@ -902,27 +921,31 @@ setInterval(()=>{
 }, 25);
 /* ===== polirritmos con polígonos: cada dedo es un polígono, cada vértice un golpe ===== */
 /* lista de golpes de una vuelta (fracción 0-1): dedos que tocan y clic del pulso */
-function polyEvents(cs, beats){
+function polyEvents(cs, beats, G){
   const m = new Map(), add = (f, fn)=>{ const k = Math.round(f * 1e6); let e = m.get(k); if(!e){ e = { f, fs: [], click: 0 }; m.set(k, e); } fn(e); };
   for(let j = 0; j < beats; j++) add(j / beats, e=> e.click = j === 0 ? 2 : 1);
-  cs.forEach((n, i)=>{ for(let k = 0; k < n; k++) add(k / n, e=> e.fs.push(i + 1 + (k === 0 ? 10 : 0))); });
+  cs.forEach((v, i)=> pFr(v, G).forEach(f=> add(f, e=> e.fs.push(i + 1 + (f === 0 ? 10 : 0)))));
   return [...m.values()].sort((a, b)=> a.f - b.f);
 }
-const polyInit = (cs, beats, bpm, t0)=> ({ ev: polyEvents(cs, beats), C: beats * 60 / bpm, t0, a0: t0, i: 0 });
+const polyInit = (cs, beats, bpm, t0, G)=> ({ ev: polyEvents(cs, beats, G || 16), C: beats * 60 / bpm, t0, a0: t0, i: 0 });
 function polyRun(P, fn){
   if(P.t0 + P.C < now() - .2){ P.t0 = P.a0 = now() + .05; P.i = 0; }
   for(let g = 0; g < 400; g++){ const e = P.ev[P.i], t = P.t0 + e.f * P.C; if(t >= now() + .12) break; fn(e, t); P.i++; if(P.i >= P.ev.length){ P.i = 0; P.t0 += P.C; } }
 }
-function polySVG(cs){
-  const c = 130, R = 108, pt = (k, n)=>{ const a = -Math.PI / 2 + 2 * Math.PI * k / n; return [(c + R * Math.cos(a)).toFixed(1), (c + R * Math.sin(a)).toFixed(1)]; };
-  let sh = '', dots = '';
-  cs.map((n, i)=> [n, i + 1]).filter(([n])=> n > 0).sort((a, b)=> b[0] - a[0]).forEach(([n, f])=>{
-    const ps = Array.from({ length: n }, (_, k)=> pt(k, n)), col = FCOL[f];
-    if(n === 2) sh += `<line x1="${ps[0][0]}" y1="${ps[0][1]}" x2="${ps[1][0]}" y2="${ps[1][1]}" stroke="${col}" stroke-width="3.5" stroke-linecap="round"/>`;
-    else if(n > 2) sh += `<polygon points="${ps.map(q=> q.join(',')).join(' ')}" fill="none" stroke="${col}" stroke-width="3.5" stroke-linejoin="round"/>`;
-    dots += ps.map((q, k)=> `<circle class="pv" data-fr="${k / n}" cx="${q[0]}" cy="${q[1]}" r="6" fill="${col}"/>`).join('');
+function polySVG(cs, G, o){
+  o = o || {}; G = G || 16;
+  const c = 130, R = 108, at = (f, r)=>{ const a = -Math.PI / 2 + 2 * Math.PI * f; return [(c + (r || R) * Math.cos(a)).toFixed(1), (c + (r || R) * Math.sin(a)).toFixed(1)]; };
+  let ring = '', sh = '', dots = '', hit = '';
+  if(o.grid) for(let k = 0; k < G; k++){ const q = at(k / G), l = at(k / G, R + 15);
+    ring += `<circle class="pgp" cx="${q[0]}" cy="${q[1]}" r="3.5"/><text class="pgl" x="${l[0]}" y="${l[1]}">${k + 1}</text>`;
+    if(o.edit) hit += `<circle class="pgh" data-gi="${k}" cx="${q[0]}" cy="${q[1]}" r="12"><title>Punto ${k + 1}</title></circle>`; }
+  cs.map((v, i)=> [v, i + 1]).filter(([v])=> pCount(v) > 0).sort((a, b)=> ((a[1] === o.sel + 1) - (b[1] === o.sel + 1)) || pCount(b[0]) - pCount(a[0])).forEach(([v, f])=>{
+    const fr = pFr(v, G), ps = fr.map(x=> at(x)), col = FCOL[f], selc = o.sel === f - 1 && o.edit, w = selc ? 4.5 : 3.5;
+    if(ps.length === 2) sh += `<line x1="${ps[0][0]}" y1="${ps[0][1]}" x2="${ps[1][0]}" y2="${ps[1][1]}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>`;
+    else if(ps.length > 2) sh += `<polygon points="${ps.map(q=> q.join(',')).join(' ')}" fill="${selc ? col : 'none'}" fill-opacity="${selc ? .13 : 0}" stroke="${col}" stroke-width="${w}" stroke-linejoin="round"/>`;
+    dots += ps.map((q, k)=> `<circle class="pv" data-fr="${fr[k]}" cx="${q[0]}" cy="${q[1]}" r="6" fill="${col}"/>`).join('');
   });
-  return `<svg class="pgs" viewBox="0 0 260 260" role="img" aria-label="Polígonos: cada vértice es un golpe"><circle class="pring" cx="${c}" cy="${c}" r="${R}"/>${sh}${dots}<line class="phand" x1="${c}" y1="${c}" x2="${c}" y2="${c - R}"/><circle class="phd" cx="${c}" cy="${c - R}" r="5"/></svg>`;
+  return `<svg class="pgs" viewBox="-16 -16 292 292" role="img" aria-label="Polígonos: cada vértice es un golpe"><circle class="pring" cx="${c}" cy="${c}" r="${R}"/>${ring}${sh}${dots}<line class="phand" x1="${c}" y1="${c}" x2="${c}" y2="${c - R}"/><circle class="phd" cx="${c}" cy="${c - R}" r="5"/>${hit}</svg>`;
 }
 /* mueve la aguja y hace crecer el vértice que acaba de sonar */
 function polyDraw(svg, P){
@@ -935,10 +958,12 @@ function polyDraw(svg, P){
 /* reproductor de polígonos */
 let PP = null;
 function openPoly(x){
-  PP = { x, cs: polyArr(x), beats: x.beats || 4, bpm: bpmOf(x), spd: 1, run: false, P: null, q: [], clk: false };
+  const po = polyParse(x.poly);
+  PP = { x, cs: po.cs, G: po.G, sel: Math.max(0, po.cs.findIndex(v=> pCount(v) > 0)), beats: x.beats || 4, bpm: bpmOf(x), spd: 1, run: false, P: null, q: [], clk: false };
   play.innerHTML = `<div class="pk" role="dialog"><div class="pkh"><span>${esc(x.n)}</span><button data-plx="1">Cerrar</button></div><div class="pgeo" id="pgeo"></div>
     <div class="padwrap">${HANDS}</div><div class="plcap"></div>
     <div class="pfing" id="pfing"></div>
+    <div class="chips" style="justify-content:center;padding:6px 12px 0"><span class="rcount">círculo</span><button class="chip" data-pp="g-">−</button><span class="rcount" id="ppg"></span><button class="chip" data-pp="g+">+</button></div>
     <div class="plctl"><button data-pp="toggle" class="pltog" aria-label="Empezar">▶</button><span class="sep"></span>${[1, .5, .25].map(v=> `<button class="chip${v === 1 ? ' on' : ''}" data-ppspd="${v}">${v === 1 ? '1×' : v === .5 ? '½×' : '¼×'}</button>`).join('')}</div>
     <div class="chips" style="justify-content:center;padding:6px 12px 0"><span class="rcount">vuelta</span><button class="chip" data-pp="b-">−</button><span class="rcount" id="ppb"></span><button class="chip" data-pp="b+">+</button><span class="sep"></span><button class="chip" data-pp="t-">−</button><span class="rcount" id="ppt"></span><button class="chip" data-pp="t+">+</button></div>
     <div class="chips" style="justify-content:center;padding:6px 12px 0">${sndChips('Sin sonido')}<button class="chip" data-pp="clk">♩ pulso</button></div>
@@ -948,33 +973,54 @@ function openPoly(x){
   play.classList.add('open'); audio(); ppDraw(); ppRun(true);
 }
 function ppDraw(){
-  $('#pgeo', play).innerHTML = polySVG(PP.cs); PP.svg = $('#pgeo svg', play);
-  $('#pfing', play).innerHTML = PP.cs.map((n, i)=> `<div class="pfc${n ? '' : ' off'}"><b style="color:${FCOL[i + 1]}">${FN[i + 1]}</b><span class="pfn">${n || '—'}</span><span class="pfb"><button data-pf="${i},-1" aria-label="Menos golpes del ${FN[i + 1]}">−</button><button data-pf="${i},1" aria-label="Más golpes del ${FN[i + 1]}">+</button></span></div>`).join('');
+  $('#pgeo', play).innerHTML = polySVG(PP.cs, PP.G, { grid: true, edit: true, sel: PP.sel }); PP.svg = $('#pgeo svg', play);
+  $('#pfing', play).innerHTML = PP.cs.map((v, i)=>{ const n = pCount(v); return `<div class="pfc${n ? '' : ' off'}${PP.sel === i ? ' sel' : ''}" data-psel="${i}" style="--fc:${FCOL[i + 1]}"><b style="color:${FCOL[i + 1]}">${FN[i + 1]}</b><span class="pfn">${n || '—'}</span><span class="pft">${isPts(v) && n ? 'puntos' : n ? 'regular' : ' '}</span><span class="pfb"><button data-pf="${i},-1" aria-label="Menos golpes del ${FN[i + 1]}">−</button><button data-pf="${i},1" aria-label="Más golpes del ${FN[i + 1]}">+</button></span></div>`; }).join('');
+  $('#ppg', play).textContent = PP.G + ' puntos';
   $('#ppb', play).textContent = PP.beats + ' pulsos'; $('#ppt', play).textContent = PP.bpm + ' bpm';
   const sec = PP.beats * 60 / PP.bpm / PP.spd;
-  $('#pphint', play).textContent = `Una vuelta = ${PP.beats} pulsos a ${PP.bpm} bpm${PP.spd < 1 ? ' a ' + (PP.spd === .5 ? '½×' : '¼×') : ''} (${sec.toFixed(1).replace('.', ',')} s). Los números son golpes por vuelta; 0 apaga el dedo.`;
-  $('.plcap', play).textContent = PP.cs.some(n=> n) ? PP.cs.map((n, i)=> n ? FN[i + 1] + ' ' + n : '').filter(Boolean).join(' · ') : 'enciende algún dedo con +';
+  $('#pphint', play).textContent = `Una vuelta = ${PP.beats} pulsos a ${PP.bpm} bpm${PP.spd < 1 ? ' a ' + (PP.spd === .5 ? '½×' : '¼×') : ''} (${sec.toFixed(1).replace('.', ',')} s). Toca un dedo y luego los puntos del círculo para ponerle o quitarle golpes; con − y + vuelve a ser un polígono regular.`;
+  $('.plcap', play).textContent = PP.cs.some(v=> pCount(v)) ? PP.cs.map((v, i)=> pCount(v) ? FN[i + 1] + ' ' + pCount(v) : '').filter(Boolean).join(' · ') : 'enciende algún dedo con + o tocando el círculo';
   if(PP.run) ppRestart(); else polyDraw(PP.svg, { a0: now() + 1e6, C: 1 });
 }
-function ppRestart(){ PP.q = []; PP.P = PP.cs.some(n=> n) ? polyInit(PP.cs, PP.beats, PP.bpm * PP.spd, now() + .08) : null; }
+function ppRestart(){ PP.q = []; PP.P = PP.cs.some(v=> pCount(v)) ? polyInit(PP.cs, PP.beats, PP.bpm * PP.spd, now() + .08, PP.G) : null; }
 function ppRun(r){ PP.run = r; const t = $('.pltog', play); t.textContent = r ? '❚❚' : '▶'; t.setAttribute('aria-label', r ? 'Pausa' : 'Empezar'); if(r){ audio(); ppRestart(); } else { PP.P = null; PP.q = []; paint(play.querySelector('.padwrap svg')); } }
 function ppClick(e){
   const sd = e.target.closest('[data-snd]'); if(sd){ setSnd(sd.dataset.snd); return; }
   const sp = e.target.closest('[data-ppspd]'); if(sp){ PP.spd = +sp.dataset.ppspd; play.querySelectorAll('[data-ppspd]').forEach(c=> c.classList.toggle('on', c === sp)); ppDraw(); return; }
-  const pf = e.target.closest('[data-pf]'); if(pf){ const [i, d] = pf.dataset.pf.split(',').map(Number); PP.cs[i] = clamp(PP.cs[i] + d, 0, 9); ppDraw(); return; }
+  const pf = e.target.closest('[data-pf]'); if(pf){ const [i, d] = pf.dataset.pf.split(',').map(Number); PP.cs[i] = clamp(pCount(PP.cs[i]) + d, 0, 9); PP.sel = i; ppDraw(); return; }
+  const gi = e.target.closest('[data-gi]'); if(gi){ ppToggle(+gi.dataset.gi); return; }
+  const ps = e.target.closest('[data-psel]'); if(ps){ PP.sel = +ps.dataset.psel; ppDraw(); return; }
   const b = e.target.closest('[data-pp]'); if(!b) return;
   const a = b.dataset.pp, x = PP.x;
   if(a === 'toggle'){ ppRun(!PP.run); return; }
   if(a === 'clk'){ PP.clk = !PP.clk; b.classList.toggle('on', PP.clk); return; }
   if(a === 'b-' || a === 'b+'){ PP.beats = clamp(PP.beats + (a === 'b+' ? 1 : -1), 1, 12); ppDraw(); return; }
+  if(a === 'g-' || a === 'g+'){ ppGrid(clamp(PP.G + (a === 'g+' ? 1 : -1), 2, 32)); return; }
   if(a === 't-' || a === 't+'){ PP.bpm = clamp(PP.bpm + (a === 't+' ? 5 : -5), 20, 300); ppDraw(); return; }
   if(a === 'save' || a === 'new'){
-    if(!PP.cs.some(n=> n)){ toast('Enciende algún dedo'); return; }
-    const base = { n: x.n, d: x.d, h: x.h, fam: x.f.id, l: x.l, bpm0: x.bpm0, L: '.', R: '.', sub: 1, beats: PP.beats, poly: PP.cs.join(' ') };
+    if(!PP.cs.some(v=> pCount(v))){ toast('Enciende algún dedo'); return; }
+    const base = { n: x.n, d: x.d, h: x.h, fam: x.f.id, l: x.l, bpm0: x.bpm0, L: '.', R: '.', sub: 1, beats: PP.beats, poly: polySer(PP.cs, PP.G) };
     if(a === 'new'){ const nid = 'u' + Date.now().toString(36); ejs[nid] = Object.assign({ own: true }, base, { n: x.n + ' (mío)', bpm0: PP.bpm }); saveE(); rebuild(); PP.x = BYN.get(nid); $('.pkh span', play).textContent = PP.x.n; toast('Guardado como «' + PP.x.n + '»'); }
     else { ejs[x.id] = Object.assign({ own: !!x.own }, base); saveE(); rebuild(); PP.x = BYN.get(x.id); setBpm(PP.x, PP.bpm); toast('Cambios guardados'); }
     rerender(); return;
   }
+}
+/* poner o quitar un punto del círculo al dedo elegido */
+function ppToggle(k){
+  const i = PP.sel; let v = PP.cs[i];
+  if(!isPts(v)){
+    if(v > 0 && PP.G % v === 0) v = Array.from({ length: v }, (_, j)=> j * PP.G / v);
+    else { if(v > 0) toast(`Su polígono de ${v} no cabe en ${PP.G} puntos: empieza de cero`); v = []; }
+  }
+  v = v.includes(k) ? v.filter(n=> n !== k) : v.concat(k).sort((a, b)=> a - b);
+  PP.cs[i] = v; ppDraw();
+  if(v.includes(k)){ audio(); playStep({ L: [i + 1], R: [i + 1] }, now()); }
+}
+/* cambiar cuántos puntos tiene el círculo: los puntos puestos se colocan en el más cercano */
+function ppGrid(G){
+  if(G === PP.G) return; let moved = false;
+  PP.cs = PP.cs.map(v=>{ if(!isPts(v)) return v; return [...new Set(v.map(n=>{ const t = n * G / PP.G, r = Math.round(t) % G; if(Math.abs(t - Math.round(t)) > 1e-9) moved = true; return r; }))].sort((a, b)=> a - b); });
+  PP.G = G; ppDraw(); if(moved) toast('Algunos puntos se han movido al más cercano');
 }
 setInterval(()=>{
   if(!PP || !PP.run || !PP.P) return;
@@ -1008,7 +1054,7 @@ function startSes(rid){
 function sesHTML(){
   const it = S.items[S.i];
   return `<div class="ssec">${esc(it.sec || 'ejercicio')} · ${S.i + 1}/${S.items.length}</div><div class="sname">${esc(it.x.n)}</div>${it.x.f.nohands ? `<div class="sdesc" style="opacity:.85;font-size:15px;padding-top:8px">${esc(it.x.d)}</div><div class="sdesc">${esc(it.x.h)}</div><div class="plcap" hidden></div><div class="plkeys" hidden></div>` : `<div class="sdesc">${esc(it.x.h)}</div>
-    ${it.x.poly ? `<div class="pgeo">${polySVG(polyArr(it.x))}</div>` : ''}<div class="padwrap">${HANDS}</div><div class="plcap"></div><div class="plkeys"></div>${it.x.poly ? '' : trChips(it.x, steps(it.x).length, trOf(it.x, steps(it.x).length))}`}
+    ${it.x.poly ? `<div class="pgeo">${polySVG(polyArr(it.x), polyG(it.x), { grid: polyArr(it.x).some(isPts) })}</div>` : ''}<div class="padwrap">${HANDS}</div><div class="plcap"></div><div class="plkeys"></div>${it.x.poly ? '' : trChips(it.x, steps(it.x).length, trOf(it.x, steps(it.x).length))}`}
     <div class="stimer prep">${it.x.beats || 4}</div>
     <div class="plctl" id="sctl"><button data-s="prev" aria-label="Ejercicio anterior">‹</button><button data-s="toggle" class="stog" aria-label="Pausa">❚❚</button><button data-s="next" aria-label="Siguiente">›</button><span class="sep"></span><button data-s="dn" aria-label="Más lento">−</button><span class="bpmv"><span id="bv">${bpmOf(it.x)}</span> <small>bpm</small></span><button data-s="up" aria-label="Más rápido">+</button></div>
     <div class="srate" id="srate"><p>¿Cómo ha salido?</p><div class="chips"><button class="chip" data-rate="-1">Con fallos · −5</button><button class="chip" data-rate="0">Bien</button><button class="chip" data-rate="1">Limpio · +5</button></div>
@@ -1036,7 +1082,7 @@ setInterval(()=>{
     vq.push({ t: nextT, k: kb }); kb++; nextT += spb / sub;
   }
   if(x.poly && kb >= ci){
-    if(!S.P) S.P = polyInit(polyArr(x), bt, bpmOf(x), Math.max(nextT, now() + .05));
+    if(!S.P) S.P = polyInit(polyArr(x), bt, bpmOf(x), Math.max(nextT, now() + .05), polyG(x));
     polyRun(S.P, (e, t)=>{ if(e.click) click(t, e.click === 2); playStep({ L: e.fs, R: e.fs }, t); vq.push({ t, k: ci, pe: e }); });
   }
 }, 25);
